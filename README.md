@@ -1,124 +1,148 @@
-# 少儿编程考级与学习规划系统
+# 少儿编程成就展示系统
 
-## 项目概述
-少儿编程考级与学习规划系统是一个为青少年提供编程学习指导和资源的在线平台。系统旨在帮助学生系统化学习编程知识，规划个人学习路径，追踪学习进度，同时展示学习成果和荣誉。
+## 📖 项目简介
 
-## 技术栈
-- 前端：原生HTML、CSS、JavaScript，实现响应式设计
-- 后端：PHP 7.4+
-- 数据库：MySQL 5.7+
-- 部署环境：宝塔面板或常规PHP虚拟主机
+少儿编程成就展示系统是面向6-16岁青少年的编程学习成就管理平台。系统专注于记录和展示学生的各类编程成就，由管理员进行统一管理。
 
-## 设计风格
-本项目采用多巴胺风格设计，特点包括：
-- 明亮多彩的配色方案
-- 圆角元素和柔和阴影
-- 清晰的视觉层次
-- 简洁而有趣的UI元素
-- 流畅的动画效果
-这种设计风格特别适合吸引少儿的注意力，增强用户体验和互动性。
+### 🎯 核心价值
 
-## 安装指南
-1. 将所有文件上传到您的Web服务器
-2. 创建MySQL数据库
-3. 修改`db_config.php`文件中的数据库连接信息
-4. 访问`install.php`初始化系统
-5. 默认管理员账号：admin，密码：admin123
+- **成就展示**：记录并展示学生编程成就，提升学习积极性和成就感
+- **简单管理**：管理员可轻松添加和管理学生成就记录
 
-## 目录结构
+## 🧰 技术栈
+
+- **前端**：HTML5 + CSS3 + JavaScript + Bootstrap 5，多巴胺设计风格
+- **后端**：PHP 8.0+，轻量级MVC架构
+- **数据库**：MySQL 5.7+
+- **服务器**：Nginx + PHP-FPM
+- **部署**：宝塔面板快速部署
+
+## 📁 项目结构
+
 ```
-/                   - 根目录
-├── admin/          - 管理员后台
-├── assets/         - 静态资源
-│   ├── css/        - 样式文件
-│   ├── js/         - JavaScript文件
-│   └── images/     - 图片资源
-├── auth/           - 认证相关页面
-│   ├── login.php   - 登录页面
-│   ├── register.php - 注册页面
-│   └── logout.php  - 退出登录
-├── courses/        - 课程相关页面
-├── errors/         - 错误页面
-├── exam_scores/    - 考级成绩模块
-├── honors/         - 荣誉墙模块
-│   ├── modal_add_honor.php - 添加荣誉弹窗
-│   └── save_honor.php - 保存荣誉记录
-├── includes/       - PHP功能文件
-│   ├── config.php  - 系统配置
-│   ├── db.php      - 数据库连接
-│   └── functions.php - 通用函数
-├── learning/       - 学习路径模块
-├── plans/          - 学习规划模块
-├── sql/            - SQL文件
-│   └── init.sql    - 数据库初始化脚本
-├── templates/      - 模板文件
-│   ├── header.php  - 页头模板
-│   └── footer.php  - 页脚模板
-├── user/           - 用户相关页面
-│   ├── profile.php - 个人中心
-│   ├── settings.php - 账号设置
-│   └── edit_profile.php - 编辑个人资料
-├── index.php       - 首页
-├── db_config.php   - 数据库配置
-├── install.php     - 安装脚本
-└── .htaccess       - Apache配置文件
+/网站根目录
+├── index.php         # 入口文件 ✅
+├── config.php        # 配置文件 ✅
+├── routes.php        # 路由配置 ✅
+├── .htaccess         # Nginx配置 ✅
+├── .install_lock     # 安装锁定文件 ✅
+├── install/          # 安装系统 ✅
+│   ├── index.php     # 安装向导入口 ✅
+│   ├── templates/    # 安装界面模板 ✅
+│   ├── database.sql  # 数据库结构 ✅
+│   └── installer.php # 安装程序类 ✅
+├── core/             # 核心类库 
+│   ├── Database.php  # 数据库连接类 ✅
+│   ├── Router.php    # 路由类 ✅
+│   └── helper.php    # 辅助函数 ✅
+├── controllers/      # 控制器 
+│   ├── UserController.php      # 用户控制器 ✅
+│   ├── AdminController.php     # 管理员控制器 ✅
+│   └── AchievementController.php # 成就控制器 ✅
+├── models/           # 数据模型 
+│   ├── Model.php       # 基础模型类 ✅
+│   ├── User.php        # 用户模型 ✅
+│   ├── Student.php     # 学生模型 ✅
+│   ├── Achievement.php # 成就模型 ✅
+│   └── Setting.php     # 系统设置模型 ✅
+├── views/            # 视图模板
+│   ├── header.php ✅
+│   ├── footer.php ✅
+│   ├── home.php ✅
+│   ├── login.php ✅
+│   ├── 404.php ✅
+│   ├── achievements.php ✅
+│   ├── student_profile.php ✅
+│   ├── student_achievements.php ✅
+│   ├── user_profile.php ✅
+│   └── admin/ ✅
+│       ├── dashboard.php ✅
+│       ├── students.php ✅
+│       ├── list_students.php ✅
+│       ├── add_student.php ✅
+│       ├── edit_student.php ✅
+│       ├── achievements.php ✅
+│       ├── achievement_form.php ✅
+│       ├── statistics.php ✅ 
+│       ├── settings.php ✅
+│       └── student_achievements.php ✅
+├── assets/           # 静态资源
+│   ├── css/ ✅
+│   │   ├── style.css       # 主样式 ✅
+│   │   ├── dark-theme.css  # 深色主题 ✅
+│   │   └── light-theme.css # 浅色主题 ✅
+│   ├── js/
+│   │   └── theme-switcher.js # 主题切换脚本 ✅
+│   └── images/ ✅
+├── uploads/          # 上传文件 ✅
+└── 参考样式/          # 设计参考 ✅
 ```
 
-## 主要功能
+## 🧩 开发状态
 
-### 1. 用户认证系统
-- 用户注册与登录
-- 用户角色管理（学生、教师、管理员）
-- 个人资料管理
-- 账号设置和通知偏好
+### 已完成功能
 
-### 2. 荣誉墙
-- 展示学生获得的各类奖项、证书和比赛成绩
-- 按时间排序展示成就历程
-- 支持添加和管理荣誉记录
+1. **系统框架**
+   - 系统入口与配置 ✅
+   - 安装向导 ✅
+   - 核心类库 ✅
+   - 主题切换 ✅
 
-### 3. 学习路径
-- 智能推荐学习路径
-- 多种编程语言的学习指南（Scratch, Python, Web前端, C++）
-- 阶段性学习目标和技能树
+2. **管理员功能**
+   - 登录系统 ✅
+   - 仪表盘页面 ✅
+   - 学生管理 ✅ 
+     - 学生列表 ✅
+     - 添加学生 ✅
+     - 编辑学生 ✅
+   - 成就管理 (部分完成)
+     - 成就列表 ✅
+     - 添加成就 ✅
+     - 编辑成就 ✅
+   - 系统设置 ✅
+   - 数据统计 ✅
 
-### 4. 学习规划
-- 个性化学习计划
-- 进度追踪
-- 阶段性成果展示
+3. **模型层**
+   - 基础模型类 ✅
+   - 用户模型 ✅
+   - 学生模型 ✅ 
+   - 成就模型 ✅
+   - 设置模型 ✅
 
-### 5. 考级系统
-- 考级报名
-- 成绩查询
-- 证书展示
+4. **前台界面**
+   - 首页 ✅
+   - 登录页 ✅
+   - 主题切换 ✅
+   - 公共成就展示 ✅
+   - 个人成就页面 ✅
 
-## 数据库设计
-系统采用MySQL数据库，主要表结构包括：
-- students: 学生信息表
-- accounts: 用户账号表
-- honors: 荣誉记录表
-- learning_paths: 学习路径表
-- learning_plans: 学习规划表
-- learning_progress: 学习进度表
-- scores: 考级成绩表
-- teachers: 教师信息表
+5. **文件功能**
+   - 附件上传功能 ✅
+   - 证书图片显示 ✅
 
-## 开发指南
-- 代码风格遵循PSR-4规范
-- 使用MVC架构组织代码
-- 前端样式遵循多巴胺设计风格指南
-- 所有API返回统一的JSON格式
+6. **其他功能**
+   - 个人资料页 ✅
 
-## 注意事项
-- 本系统设计为轻量级应用，适合中小型教育机构使用
-- 所有密码采用bcrypt算法加密存储
-- 建议定期备份数据库
+### 待完成功能
 
-## 版权信息
-© 2025- 少儿编程考级与学习规划系统. 保留所有权利。
+所有功能已完成 ✅
 
-## 开源协议
-本项目采用MIT开源许可协议。详细信息请查看项目根目录下的LICENSE文件（中文版）和LICENSE.en文件（英文版）。
+## 🚀 部署与安装
 
-## 联系与支持
-如有问题或建议，请联系：1697391069@qq.com 
+### 系统要求
+   - PHP 8.0或更高版本
+   - MySQL 5.7或更高版本
+   - 支持mod_rewrite的Web服务器
+- 共享主机即可满足需求
+
+### 安装步骤
+1. 上传所有文件到网站根目录
+2. 访问 `http://您的域名/install/`
+3. 按照安装向导操作完成配置
+4. 安装完成后，自动删除或锁定安装目录
+
+
+## 📞 联系与支持
+
+- 技术支持：support@example.com
+- 项目维护：1697391069@qq.com
