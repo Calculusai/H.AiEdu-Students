@@ -51,6 +51,11 @@ class UserController {
         // 查询用户
         $user = $this->getUserByUsername($username);
         
+        // 如果没找到，尝试使用学号作为用户名查找学生账户
+        if (!$user) {
+            $user = $this->getStudentUserByStudentId($username);
+        }
+        
         // 验证用户和密码
         if (!$user || !password_verify($password, $user['password'])) {
             $_SESSION['flash_message'] = '用户名或密码错误。';
@@ -73,6 +78,16 @@ class UserController {
         $_SESSION['user_role'] = $user['role'];
         $_SESSION['theme_preference'] = 'light'; // 始终使用浅色主题
         
+        // 学生角色特殊处理
+        if ($user['role'] === 'student') {
+            // 获取学生信息
+            $student = $this->getStudentByUserId($user['id']);
+            if ($student) {
+                $_SESSION['student_id'] = $student['id'];
+                $_SESSION['student_name'] = $student['name'];
+            }
+        }
+        
         // 记录登录时间和IP
         $this->recordLogin($user['id']);
         
@@ -84,6 +99,9 @@ class UserController {
         // 重定向到适当的页面
         if ($user['role'] == 'admin') {
             redirect(site_url('admin/dashboard'));
+        } else if ($user['role'] == 'student') {
+            // 学生角色重定向到学生个人资料页面
+            redirect(site_url('student/' . $_SESSION['student_id']));
         } else {
             redirect(site_url());
         }
@@ -223,10 +241,13 @@ class UserController {
             return;
         }
         
+        // 设置页面变量
         $page_title = '个人资料';
         $active_page = 'profile';
         
-        // 获取当前用户信息
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
+        
         $user_id = $_SESSION['user_id'];
         $user = $this->getUserById($user_id);
         
@@ -379,5 +400,37 @@ class UserController {
         
         $sql = "SELECT * FROM " . TABLE_PREFIX . "users WHERE id = :id LIMIT 1";
         return $this->db->query($sql, ['id' => $userId]);
+    }
+    
+    /**
+     * 根据学号获取学生用户
+     *
+     * @param string $studentId 学号
+     * @return array|bool 用户数据或false
+     */
+    private function getStudentUserByStudentId($studentId) {
+        if (!SYSTEM_INSTALLED) {
+            return false;
+        }
+        
+        $sql = "SELECT u.* FROM " . TABLE_PREFIX . "users u 
+                JOIN " . TABLE_PREFIX . "students s ON u.id = s.user_id 
+                WHERE s.student_id = :student_id LIMIT 1";
+        return $this->db->query($sql, ['student_id' => $studentId]);
+    }
+    
+    /**
+     * 根据用户ID获取学生信息
+     *
+     * @param int $userId 用户ID
+     * @return array|bool 学生数据或false
+     */
+    private function getStudentByUserId($userId) {
+        if (!SYSTEM_INSTALLED) {
+            return false;
+        }
+        
+        $sql = "SELECT * FROM " . TABLE_PREFIX . "students WHERE user_id = :user_id LIMIT 1";
+        return $this->db->query($sql, ['user_id' => $userId]);
     }
 } 

@@ -12,93 +12,173 @@ $breadcrumbs = [
 include_once VIEW_PATH . '/templates/breadcrumb.php';
 ?>
 
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h1 class="h3 mb-3"><i class="fas fa-tachometer-alt me-2"></i>管理员控制台</h1>
-            <p class="text-muted">欢迎回来，<?php echo htmlspecialchars($_SESSION['username'] ?? '管理员'); ?>！</p>
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card glass animate-float mb-4">
+                <div class="card-body p-4">
+                    <h1 class="gradient-text mb-3 animate-pulse">管理控制台</h1>
+                    <p class="lead">欢迎回来，<?php echo htmlspecialchars($_SESSION['username'] ?? '管理员'); ?>！今天又是充满可能的一天。</p>
+                </div>
+            </div>
         </div>
     </div>
     
-    <div class="row mb-4">
+    <div class="row g-4 mb-5">
         <!-- 学生统计卡片 -->
-        <div class="col-md-4 mb-3">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">学生数量</div>
-                            <div class="h5 mb-0 font-weight-bold"><?php echo isset($stats['students']) ? number_format($stats['students']) : 0; ?></div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon stat-icon-student">
+                            <i class="bi bi-people-fill fs-4"></i>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        <div class="ms-3">
+                            <div class="small text-muted">学生数量</div>
+                            <div class="fs-2 fw-bold"><?php echo isset($stats['students']) ? number_format($stats['students']) : 0; ?></div>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge stat-badge stat-badge-student">学生</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a href="<?php echo site_url('admin/students'); ?>" class="text-primary">查看详情 <i class="fas fa-arrow-right"></i></a>
+                <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+                    <a href="<?php echo site_url('admin/students'); ?>" class="btn btn-sm btn-primary btn-rounded w-100">
+                        <i class="bi bi-arrow-right me-2"></i>管理学生
+                    </a>
                 </div>
             </div>
         </div>
         
         <!-- 成就统计卡片 -->
-        <div class="col-md-4 mb-3">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">成就数量</div>
-                            <div class="h5 mb-0 font-weight-bold"><?php echo isset($stats['achievements']) ? number_format($stats['achievements']) : 0; ?></div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon stat-icon-achievement">
+                            <i class="bi bi-award-fill fs-4"></i>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-award fa-2x text-gray-300"></i>
+                        <div class="ms-3">
+                            <div class="small text-muted">成就记录</div>
+                            <div class="fs-2 fw-bold"><?php echo isset($stats['achievements']) ? number_format($stats['achievements']) : 0; ?></div>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge stat-badge stat-badge-achievement">成就</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a href="<?php echo site_url('admin/achievements'); ?>" class="text-success">查看详情 <i class="fas fa-arrow-right"></i></a>
+                <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+                    <a href="<?php echo site_url('admin/achievements'); ?>" class="btn btn-sm btn-primary btn-rounded w-100">
+                        <i class="bi bi-arrow-right me-2"></i>管理成就
+                    </a>
                 </div>
             </div>
         </div>
         
         <!-- 成就类型统计卡片 -->
-        <div class="col-md-4 mb-3">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">成就类型</div>
-                            <div class="h5 mb-0 font-weight-bold"><?php echo isset($stats['achievement_types']) ? number_format($stats['achievement_types']) : 0; ?></div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon stat-icon-type">
+                            <i class="bi bi-grid-3x3-gap-fill fs-4"></i>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        <div class="ms-3">
+                            <div class="small text-muted">成就类型</div>
+                            <div class="fs-2 fw-bold"><?php echo isset($stats['achievement_types']) ? number_format($stats['achievement_types']) : 0; ?></div>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge stat-badge stat-badge-type">类型</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a href="<?php echo site_url('admin/achievements'); ?>" class="text-info">查看详情 <i class="fas fa-arrow-right"></i></a>
+                <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+                    <a href="<?php echo site_url('admin/achievements'); ?>" class="btn btn-sm btn-primary btn-rounded w-100">
+                        <i class="bi bi-arrow-right me-2"></i>查看类型
+                    </a>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="row">
-        <!-- 最新成就 -->
+    <div class="row mb-5">
+        <!-- 快速操作 -->
         <div class="col-md-12 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">最新添加的成就</h6>
-                    <a href="<?php echo site_url('admin/achievements'); ?>" class="btn btn-sm btn-primary">
-                        查看全部
+            <div class="card glass">
+                <div class="card-body p-4">
+                    <h5 class="gradient-text mb-4">快速操作</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="<?php echo site_url('admin/students/add'); ?>" class="card card-gradient h-100 hover-scale text-decoration-none">
+                                <div class="card-body p-4 text-center">
+                                    <div class="badge-icon bg-gradient-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:50px;height:50px">
+                                        <i class="bi bi-person-plus-fill"></i>
+                                    </div>
+                                    <h6 class="mb-0">添加学生</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="<?php echo site_url('admin/achievements/add'); ?>" class="card card-gradient h-100 hover-scale text-decoration-none">
+                                <div class="card-body p-4 text-center">
+                                    <div class="badge-icon bg-gradient-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:50px;height:50px">
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    </div>
+                                    <h6 class="mb-0">添加成就</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="<?php echo site_url('admin/statistics'); ?>" class="card card-gradient h-100 hover-scale text-decoration-none">
+                                <div class="card-body p-4 text-center">
+                                    <div class="badge-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:50px;height:50px">
+                                        <i class="bi bi-bar-chart-fill"></i>
+                                    </div>
+                                    <h6 class="mb-0">数据统计</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="<?php echo site_url('admin/settings'); ?>" class="card card-gradient h-100 hover-scale text-decoration-none">
+                                <div class="card-body p-4 text-center">
+                                    <div class="badge-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:50px;height:50px">
+                                        <i class="bi bi-gear-fill"></i>
+                                    </div>
+                                    <h6 class="mb-0">系统设置</h6>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 最新成就 -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card glass">
+                <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 p-4">
+                    <h5 class="gradient-text mb-0">最新添加的成就</h5>
+                    <a href="<?php echo site_url('admin/achievements'); ?>" class="btn btn-sm btn-primary btn-shine">
+                        查看全部 <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <?php if (!isset($stats['newest_achievements']) || empty($stats['newest_achievements'])): ?>
-                        <p class="text-center py-3">暂无成就数据</p>
+                        <div class="text-center py-5">
+                            <div class="badge-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:60px;height:60px">
+                                <i class="bi bi-inbox fs-1"></i>
+                            </div>
+                            <h5 class="text-muted">暂无成就数据</h5>
+                            <a href="<?php echo site_url('admin/achievements/add'); ?>" class="btn btn-sm btn-primary btn-shine mt-3">
+                                <i class="bi bi-plus-circle me-2"></i>添加成就
+                            </a>
+                        </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped" width="100%" cellspacing="0">
-                                <thead>
+                            <table class="table table-borderless table-hover align-middle">
+                                <thead class="text-muted small">
                                     <tr>
                                         <th>学生</th>
                                         <th>成就名称</th>
@@ -110,13 +190,13 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                 <tbody>
                                     <?php foreach ($stats['newest_achievements'] as $achievement): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($achievement['student_name']); ?></td>
+                                            <td class="fw-medium"><?php echo htmlspecialchars($achievement['student_name']); ?></td>
                                             <td><?php echo htmlspecialchars($achievement['title']); ?></td>
-                                            <td><span class="badge bg-primary"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span></td>
+                                            <td><span class="badge badge-primary"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span></td>
                                             <td><?php echo htmlspecialchars($achievement['achieved_date']); ?></td>
                                             <td>
-                                                <a href="<?php echo site_url('admin/achievements/edit/'.$achievement['id']); ?>" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-edit"></i>
+                                                <a href="<?php echo site_url('admin/achievements/edit/'.$achievement['id']); ?>" class="btn btn-sm btn-primary btn-shine">
+                                                    <i class="bi bi-pencil"></i>
                                                 </a>
                                             </td>
                                         </tr>
@@ -125,40 +205,6 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                             </table>
                         </div>
                     <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">快速操作</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <a href="<?php echo site_url('admin/add_student'); ?>" class="btn btn-primary btn-block">
-                                <i class="fas fa-user-plus mr-2"></i> 添加学生
-                            </a>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="<?php echo site_url('admin/add_achievement'); ?>" class="btn btn-success btn-block">
-                                <i class="fas fa-plus-circle mr-2"></i> 添加成就
-                            </a>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="<?php echo site_url('admin/statistics'); ?>" class="btn btn-warning btn-block">
-                                <i class="fas fa-chart-bar mr-2"></i> 数据统计
-                            </a>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="<?php echo site_url('admin/settings'); ?>" class="btn btn-info btn-block">
-                                <i class="fas fa-cog mr-2"></i> 系统设置
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

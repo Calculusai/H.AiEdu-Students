@@ -65,6 +65,9 @@ class AchievementController {
         $page_title = '成就展示';
         $active_page = 'achievements';
         
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
+        
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         
@@ -149,6 +152,9 @@ class AchievementController {
         // 设置页面标题和当前页面
         $page_title = $student['name'] . ' 的成就';
         $active_page = 'achievements';
+        
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
         
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

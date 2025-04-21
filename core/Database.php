@@ -26,6 +26,11 @@ class Database {
             ];
             
             $this->connection = new PDO($dsn, DB_USER, DB_PASS, $options);
+            
+            // 设置正确的字符集
+            $this->connection->exec("SET NAMES utf8mb4");
+            $this->connection->exec("SET CHARACTER SET utf8mb4");
+            $this->connection->exec("SET character_set_connection=utf8mb4");
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
             error_log("数据库连接错误: " . $this->error);

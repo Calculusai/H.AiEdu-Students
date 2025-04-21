@@ -34,6 +34,7 @@ define('MODEL_PATH', BASE_PATH . '/models');
 define('VIEW_PATH', BASE_PATH . '/views');
 define('ASSET_PATH', BASE_PATH . '/assets');
 define('UPLOAD_PATH', BASE_PATH . '/uploads');
+define('LIB_PATH', BASE_PATH . '/lib');
 
 // 安全设置
 define('AUTH_KEY', '65867009065ae38380b78837e9dc8183');

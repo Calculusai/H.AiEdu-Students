@@ -1,0 +1,225 @@
+/**
+ * 少儿编程成就展示系统 - 模态框样式文件
+ * 自定义 Bootstrap 模态框组件样式
+ */
+
+/* 基础模态框样式 */
+.modal {
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1040;
+    background-color: rgba(var(--dark-color-rgb, 17, 24, 39), 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+    margin: 1.75rem auto;
+    max-width: 500px;
+    transform: translateY(-30px);
+    transition: transform 0.4s var(--bounce);
+}
+
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+.modal-content {
+    border: none;
+    border-radius: var(--card-border-radius, 1.25rem);
+    box-shadow: var(--box-shadow-lg);
+    overflow: hidden;
+    background-color: var(--card-bg, #ffffff);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background: var(--primary-gradient, linear-gradient(135deg, #6366f1, #8b5cf6));
+    position: relative;
+}
+
+.modal-title {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.modal-header .btn-close {
+    padding: 0.75rem;
+    margin: -0.75rem -0.75rem -0.75rem auto;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: var(--body-color, #374151);
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    background-color: var(--gray-50, #f9fafb);
+}
+
+/* 大型模态框 */
+.modal-lg .modal-dialog {
+    max-width: 800px;
+}
+
+/* 小型模态框 */
+.modal-sm .modal-dialog {
+    max-width: 300px;
+}
+
+/* 全屏模态框 */
+.modal-fullscreen .modal-dialog {
+    max-width: none;
+    margin: 0;
+    height: 100%;
+}
+
+.modal-fullscreen .modal-content {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+}
+
+/* 自定义模态框变体 */
+.modal-success .modal-header {
+    background: var(--success-gradient, linear-gradient(135deg, #10b981, #34d399));
+}
+
+.modal-danger .modal-header {
+    background: var(--danger-gradient, linear-gradient(135deg, #ef4444, #f87171));
+}
+
+.modal-warning .modal-header {
+    background: var(--warning-gradient, linear-gradient(135deg, #f59e0b, #fbbf24));
+}
+
+.modal-info .modal-header {
+    background: var(--info-gradient, linear-gradient(135deg, #3b82f6, #60a5fa));
+}
+
+/* 成就模态框特殊样式 */
+.achievement-modal .modal-content {
+    border-radius: 16px;
+    border: none;
+    overflow: hidden;
+}
+
+.achievement-modal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #8e54e9 100%);
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.achievement-modal .modal-title {
+    color: white;
+    font-weight: 600;
+}
+
+.achievement-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.achievement-modal .modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+}
+
+/* 证书模态框特殊样式 */
+.certificate-modal .modal-body {
+    padding: 0;
+    background: #f7f7f7;
+}
+
+/* 模态框动画效果 */
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modal-slide-in {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes modal-scale-in {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 应用动画 */
+.modal.fade {
+    animation: modal-fade-in 0.3s ease;
+}
+
+.modal.slide .modal-dialog {
+    animation: modal-slide-in 0.4s var(--bounce);
+}
+
+.modal.scale .modal-dialog {
+    animation: modal-scale-in 0.4s var(--bounce);
+}
+
+/* 深色模式适配 */
+[data-theme="dark"] .modal-content {
+    background-color: var(--card-bg, #1e293b);
+}
+
+[data-theme="dark"] .modal-footer {
+    background-color: var(--gray-100, #1f2937);
+}
+
+/* 响应式调整 */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+}

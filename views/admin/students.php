@@ -13,56 +13,60 @@ $breadcrumbs = [
 include_once VIEW_PATH . '/templates/breadcrumb.php';
 ?>
 
-<div class="container-fluid mt-4">
+<div class="container py-5">
     <div class="row mb-4">
-        <div class="col-md-12">
-            <h1 class="h3 mb-3"><i class="fas fa-user-graduate me-2"></i>学生管理</h1>
+        <div class="col-12">
+            <div class="card glass animate-float mb-4">
+                <div class="card-body p-4">
+                    <h1 class="gradient-text mb-3 animate-pulse">学生管理</h1>
+                    <p class="lead">管理所有学生信息，添加、编辑或查看学生的成就记录。</p>
+                </div>
+            </div>
         </div>
     </div>
     
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">学生列表</h6>
-                    <div>
-                        <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-sm btn-primary">
-                            <i class="fas fa-plus-circle me-1"></i> 添加学生
-                        </a>
-                    </div>
+            <div class="card glass">
+                <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 p-4">
+                    <h5 class="gradient-text mb-0">学生列表</h5>
+                    <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-shine">
+                        <i class="bi bi-person-plus-fill me-2"></i>添加学生
+                    </a>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
+                <div class="card-body p-4">
+                    <div class="row g-3 mb-4">
                         <div class="col-md-8">
                             <form class="d-flex" action="<?php echo site_url('admin/students'); ?>" method="get">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="搜索学生姓名、学号或班级..." 
+                                    <span class="input-group-text bg-transparent border-end-0">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control custom-select border-start-0" placeholder="搜索学生姓名、学号或班级..." 
                                            name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                                    <button class="btn btn-outline-secondary" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                    <button class="btn btn-primary btn-shine" type="submit">搜索</button>
                                 </div>
                             </form>
                         </div>
                         <div class="col-md-4">
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                    <i class="fas fa-filter me-1"></i> 筛选
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                    <i class="bi bi-funnel-fill me-2"></i>筛选
                                 </button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         批量操作
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bulkActionsDropdown">
                                         <li><a class="dropdown-item" href="#" id="exportExcel">
-                                            <i class="fas fa-file-excel me-2"></i>导出Excel
+                                            <i class="bi bi-file-earmark-excel me-2"></i>导出Excel
                                         </a></li>
                                         <li><a class="dropdown-item" href="#" id="importStudent" data-bs-toggle="modal" data-bs-target="#importModal">
-                                            <i class="fas fa-file-import me-2"></i>导入学生
+                                            <i class="bi bi-file-earmark-arrow-up me-2"></i>导入学生
                                         </a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item text-danger" href="#" id="bulkDelete">
-                                            <i class="fas fa-trash-alt me-2"></i>批量删除
+                                            <i class="bi bi-trash me-2"></i>批量删除
                                         </a></li>
                                     </ul>
                                 </div>
@@ -84,8 +88,8 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                     
                     <form id="studentsForm" action="<?php echo site_url('admin/students/bulk_action'); ?>" method="post">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="table-light">
+                            <table class="table table-borderless table-hover align-middle">
+                                <thead class="text-muted small">
                                     <tr>
                                         <th width="40">
                                             <div class="form-check">
@@ -105,13 +109,13 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                 <tbody>
                                     <?php if (empty($students)): ?>
                                     <tr>
-                                        <td colspan="9" class="text-center py-4">
-                                            <div class="text-muted mb-3">
-                                                <i class="fas fa-folder-open fa-3x"></i>
+                                        <td colspan="9" class="text-center py-5">
+                                            <div class="badge-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:60px;height:60px">
+                                                <i class="bi bi-people fs-1"></i>
                                             </div>
-                                            <p>暂无学生数据</p>
-                                            <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-plus-circle me-1"></i> 添加学生
+                                            <h5 class="text-muted mb-3">暂无学生数据</h5>
+                                            <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-shine">
+                                                <i class="bi bi-person-plus-fill me-2"></i>添加学生
                                             </a>
                                         </td>
                                     </tr>
@@ -125,7 +129,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                             </td>
                                             <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                                             <td>
-                                                <a href="<?php echo site_url('admin/students/view/' . $student['id']); ?>" class="fw-bold text-decoration-none">
+                                                <a href="<?php echo site_url('admin/students/view/' . $student['id']); ?>" class="fw-medium text-decoration-none">
                                                     <?php echo htmlspecialchars($student['name']); ?>
                                                 </a>
                                             </td>
@@ -143,15 +147,15 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    <a href="<?php echo site_url('admin/students/edit/' . $student['id']); ?>" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="编辑">
-                                                        <i class="fas fa-edit"></i>
+                                                <div class="btn-group">
+                                                    <a href="<?php echo site_url('admin/students/edit/' . $student['id']); ?>" class="btn btn-sm btn-primary btn-shine" data-bs-toggle="tooltip" title="编辑">
+                                                        <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="<?php echo site_url('admin/students/achievements/' . $student['id']); ?>" class="btn btn-outline-info" data-bs-toggle="tooltip" title="成就管理">
-                                                        <i class="fas fa-award"></i>
+                                                    <a href="<?php echo site_url('admin/students/achievements/' . $student['id']); ?>" class="btn btn-sm btn-info btn-shine" data-bs-toggle="tooltip" title="成就管理">
+                                                        <i class="bi bi-trophy"></i>
                                                     </a>
-                                                    <button type="button" class="btn btn-outline-danger delete-btn" data-id="<?php echo $student['id']; ?>" data-name="<?php echo htmlspecialchars($student['name']); ?>" data-bs-toggle="tooltip" title="删除">
-                                                        <i class="fas fa-trash-alt"></i>
+                                                    <button type="button" class="btn btn-sm btn-danger btn-shine delete-btn" data-id="<?php echo $student['id']; ?>" data-name="<?php echo htmlspecialchars($student['name']); ?>" data-bs-toggle="tooltip" title="删除">
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -164,9 +168,9 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                     </form>
                     
                     <?php if (!empty($students)): ?>
-                    <div class="row mt-3">
+                    <div class="row mt-4">
                         <div class="col-md-6">
-                            <p>共 <strong><?php echo $total; ?></strong> 名学生，当前显示 <strong><?php echo count($students); ?></strong> 名</p>
+                            <p>共 <span class="fw-medium"><?php echo $total; ?></span> 名学生，当前显示 <span class="fw-medium"><?php echo count($students); ?></span> 名</p>
                         </div>
                         <div class="col-md-6">
                             <nav aria-label="Page navigation">
@@ -185,17 +189,17 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
 
 <!-- 筛选模态框 -->
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass">
             <form action="<?php echo site_url('admin/students'); ?>" method="get">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filterModalLabel">筛选学生</h5>
+                <div class="modal-header border-0">
+                    <h5 class="modal-title gradient-text" id="filterModalLabel">筛选学生</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="filter_class" class="form-label">班级</label>
-                        <select class="form-select" id="filter_class" name="class">
+                        <select class="form-select custom-select" id="filter_class" name="class">
                             <option value="">所有班级</option>
                             <?php if (!empty($classes)): ?>
                                 <?php foreach ($classes as $class): ?>
@@ -206,85 +210,33 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                             <?php endif; ?>
                         </select>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="filter_date" class="form-label">注册日期</label>
-                        <select class="form-select" id="filter_date" name="date_range">
-                            <option value="">全部时间</option>
-                            <option value="today" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'today') ? 'selected' : ''; ?>>今天</option>
-                            <option value="yesterday" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'yesterday') ? 'selected' : ''; ?>>昨天</option>
-                            <option value="this_week" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'this_week') ? 'selected' : ''; ?>>本周</option>
-                            <option value="last_week" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'last_week') ? 'selected' : ''; ?>>上周</option>
-                            <option value="this_month" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'this_month') ? 'selected' : ''; ?>>本月</option>
-                            <option value="last_month" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'last_month') ? 'selected' : ''; ?>>上月</option>
-                            <option value="custom" <?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'custom') ? 'selected' : ''; ?>>自定义日期</option>
+                        <label for="filter_grade" class="form-label">年级</label>
+                        <select class="form-select custom-select" id="filter_grade" name="grade">
+                            <option value="">所有年级</option>
+                            <?php if (!empty($grades)): ?>
+                                <?php foreach ($grades as $grade): ?>
+                                <option value="<?php echo htmlspecialchars($grade); ?>" <?php echo (isset($_GET['grade']) && $_GET['grade'] == $grade) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($grade); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
-                    <div id="custom_date_range" class="<?php echo (isset($_GET['date_range']) && $_GET['date_range'] == 'custom') ? '' : 'd-none'; ?>">
-                        <div class="row g-3">
-                            <div class="col-md-6 mb-3">
-                                <label for="start_date" class="form-label">开始日期</label>
-                                <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date']) : ''; ?>">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="end_date" class="form-label">结束日期</label>
-                                <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date']) : ''; ?>">
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="mb-3">
-                        <label for="filter_status" class="form-label">登录状态</label>
-                        <select class="form-select" id="filter_status" name="login_status">
+                        <label for="filter_status" class="form-label">账号状态</label>
+                        <select class="form-select custom-select" id="filter_status" name="status">
                             <option value="">所有状态</option>
-                            <option value="logged_in" <?php echo (isset($_GET['login_status']) && $_GET['login_status'] == 'logged_in') ? 'selected' : ''; ?>>已登录过</option>
-                            <option value="never_logged_in" <?php echo (isset($_GET['login_status']) && $_GET['login_status'] == 'never_logged_in') ? 'selected' : ''; ?>>从未登录</option>
+                            <option value="1" <?php echo (isset($_GET['status']) && $_GET['status'] == '1') ? 'selected' : ''; ?>>启用</option>
+                            <option value="0" <?php echo (isset($_GET['status']) && $_GET['status'] == '0') ? 'selected' : ''; ?>>禁用</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <a href="<?php echo site_url('admin/students'); ?>" class="btn btn-link text-decoration-none">重置筛选</a>
+                <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">应用筛选</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- 导入学生模态框 -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="<?php echo site_url('admin/students/import'); ?>" method="post" enctype="multipart/form-data">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="importModalLabel">导入学生</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>请上传包含学生信息的Excel文件。</p>
-                    <p>文件格式要求：</p>
-                    <ul>
-                        <li>表格第一行必须是表头，包含字段名</li>
-                        <li>必须包含学号(student_id)和姓名(name)字段</li>
-                        <li>可选字段：班级(class_name)、联系方式(contact)、邮箱(email)、备注(notes)</li>
-                    </ul>
-                    <div class="mb-3">
-                        <label for="import_file" class="form-label">选择Excel文件</label>
-                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".xlsx,.xls" required>
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="generate_password" name="generate_password" value="1" checked>
-                        <label class="form-check-label" for="generate_password">
-                            为导入的学生自动生成密码
-                        </label>
-                    </div>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>如果Excel中已包含密码字段，系统将使用该密码；否则将根据设置自动生成。
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="<?php echo site_url('admin/students/download_template'); ?>" class="btn btn-link text-decoration-none">下载模板</a>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">开始导入</button>
+                    <button type="submit" class="btn btn-primary btn-shine">应用筛选</button>
                 </div>
             </form>
         </div>
@@ -293,172 +245,152 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
 
 <!-- 删除确认模态框 -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="deleteForm" action="" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">删除学生</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger">
-                        <p><i class="fas fa-exclamation-triangle me-2"></i>警告：此操作无法撤销！</p>
-                    </div>
-                    <p>您确定要删除学生 <strong id="student-name"></strong> 吗？</p>
-                    <p>删除后，该学生所有的相关记录（包括成就、登录记录等）将被永久删除。</p>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="confirm_delete" name="confirm_delete" value="1" required>
-                        <label class="form-check-label" for="confirm_delete">
-                            我已了解删除操作的后果，并确认要删除此学生
-                        </label>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass">
+            <div class="modal-header border-0">
+                <h5 class="modal-title gradient-text" id="deleteModalLabel">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="badge-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:60px;height:60px">
+                        <i class="bi bi-exclamation-triangle-fill fs-4"></i>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-danger">确认删除</button>
-                </div>
-            </form>
+                <p class="text-center">确定要删除学生 <strong id="studentName"></strong> 吗？</p>
+                <p class="text-center text-danger">此操作将同时删除该学生的所有成就记录且不可恢复！</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger btn-shine">确认删除</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 批量删除确认模态框 -->
-<div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bulkDeleteModalLabel">批量删除学生</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger">
-                    <p><i class="fas fa-exclamation-triangle me-2"></i>警告：此操作无法撤销！</p>
+<!-- 创建一个隐藏的删除表单 -->
+<form id="deleteForm" action="" method="post" style="display:none;">
+    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+</form>
+
+<!-- 导入学生模态框 -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass">
+            <form action="<?php echo site_url('admin/students/import'); ?>" method="post" enctype="multipart/form-data">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title gradient-text" id="importModalLabel">导入学生</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <p>您确定要删除选中的 <strong id="selected-count">0</strong> 名学生吗？</p>
-                <p>删除后，这些学生所有的相关记录（包括成就、登录记录等）将被永久删除。</p>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="bulk_confirm_delete" name="confirm_delete" value="1" required>
-                    <label class="form-check-label" for="bulk_confirm_delete">
-                        我已了解删除操作的后果，并确认要删除选中的学生
-                    </label>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">选择Excel文件</label>
+                        <input type="file" class="form-control" id="importFile" name="import_file" accept=".xlsx,.xls,.csv" required>
+                        <div class="form-text">支持 Excel (.xlsx, .xls) 或 CSV 格式</div>
+                    </div>
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading mb-2"><i class="bi bi-info-circle me-2"></i>导入说明</h6>
+                        <p class="mb-2">请确保Excel文件包含以下列：</p>
+                        <ul class="mb-0">
+                            <li>学号 (student_id)</li>
+                            <li>姓名 (name)</li>
+                            <li>班级 (class_name)</li>
+                            <li>电子邮箱 (email)</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" id="confirm-bulk-delete" class="btn btn-danger">确认删除</button>
-            </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary btn-shine">导入</button>
+                </div>
+                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+            </form>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 初始化工具提示
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-    
-    // 全选/取消全选
-    const selectAll = document.getElementById('select-all');
-    const studentCheckboxes = document.querySelectorAll('.student-checkbox');
-    
-    if (selectAll) {
-        selectAll.addEventListener('change', function() {
-            studentCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-            });
-        });
-    }
-    
-    // 监听筛选日期选择
-    const filterDate = document.getElementById('filter_date');
-    const customDateRange = document.getElementById('custom_date_range');
-    
-    if (filterDate && customDateRange) {
-        filterDate.addEventListener('change', function() {
-            if (filterDate.value === 'custom') {
-                customDateRange.classList.remove('d-none');
-            } else {
-                customDateRange.classList.add('d-none');
-            }
-        });
-    }
-    
-    // 删除学生
-    const deleteButtons = document.querySelectorAll('.delete-btn');
-    const deleteForm = document.getElementById('deleteForm');
-    const studentNameElement = document.getElementById('student-name');
-    
-    deleteButtons.forEach(button => {
+    // 删除确认
+    document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const studentId = this.getAttribute('data-id');
-            const studentName = this.getAttribute('data-name');
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
             
-            deleteForm.action = `<?php echo site_url('admin/students/delete/'); ?>${studentId}`;
-            studentNameElement.textContent = studentName;
+            document.getElementById('studentName').textContent = name;
+            document.getElementById('deleteForm').action = '<?php echo site_url('admin/students/delete/'); ?>' + id;
+            console.log('删除表单将提交到: ' + document.getElementById('deleteForm').action);
             
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         });
     });
-    
+
+    // 确认删除按钮点击事件
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        console.log('确认删除按钮被点击，提交表单到: ' + document.getElementById('deleteForm').action);
+        document.getElementById('deleteForm').submit();
+    });
+
+    // 全选/取消全选
+    document.getElementById('select-all').addEventListener('change', function() {
+        const isChecked = this.checked;
+        document.querySelectorAll('.student-checkbox').forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+    });
+
     // 批量删除
-    const bulkDeleteBtn = document.getElementById('bulkDelete');
-    const confirmBulkDeleteBtn = document.getElementById('confirm-bulk-delete');
-    const selectedCountElement = document.getElementById('selected-count');
-    const studentsForm = document.getElementById('studentsForm');
-    
-    if (bulkDeleteBtn && confirmBulkDeleteBtn) {
-        bulkDeleteBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
-            const selectedCount = selectedCheckboxes.length;
-            
-            if (selectedCount === 0) {
-                alert('请先选择要删除的学生');
-                return;
-            }
-            
-            selectedCountElement.textContent = selectedCount;
-            const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteModal'));
-            bulkDeleteModal.show();
-        });
+    document.getElementById('bulkDelete').addEventListener('click', function(e) {
+        e.preventDefault();
         
-        confirmBulkDeleteBtn.addEventListener('click', function() {
-            const bulkConfirmDelete = document.getElementById('bulk_confirm_delete');
+        const selectedCount = document.querySelectorAll('.student-checkbox:checked').length;
+        
+        if (selectedCount === 0) {
+            alert('请先选择要删除的学生');
+            return;
+        }
+        
+        if (confirm(`确定要删除选中的 ${selectedCount} 名学生吗？此操作不可恢复！`)) {
+            const form = document.getElementById('studentsForm');
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete';
+            form.appendChild(actionInput);
             
-            if (!bulkConfirmDelete.checked) {
-                alert('请确认删除操作');
-                return;
-            }
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = '<?php echo generate_csrf_token(); ?>';
+            form.appendChild(csrfInput);
             
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'action';
-            hiddenInput.value = 'delete';
-            
-            studentsForm.appendChild(hiddenInput);
-            studentsForm.submit();
-        });
-    }
-    
+            form.submit();
+        }
+    });
+
     // 导出Excel
-    const exportExcelBtn = document.getElementById('exportExcel');
-    
-    if (exportExcelBtn) {
-        exportExcelBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'action';
-            hiddenInput.value = 'export';
-            
-            studentsForm.appendChild(hiddenInput);
-            studentsForm.submit();
+    document.getElementById('exportExcel').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const selectedStudents = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(checkbox => checkbox.value);
+        
+        let url = '<?php echo site_url('admin/students/export'); ?>';
+        if (selectedStudents.length > 0) {
+            url += '?ids=' + selectedStudents.join(',');
+        }
+        
+        window.location.href = url;
+    });
+
+    // 初始化工具提示
+    if (typeof bootstrap !== 'undefined') {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+    } else {
+        console.warn('Bootstrap未加载，工具提示功能不可用');
     }
 });
 </script>

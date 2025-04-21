@@ -13,20 +13,20 @@ unset($_SESSION['flash_message']);
 unset($_SESSION['flash_type']);
 ?>
 
-<div class="container mt-5 mb-5">
-    <div class="row">
+<div class="container py-5">
+    <div class="row g-4">
         <div class="col-md-3">
-            <div class="card dopamine-card mb-4">
-                <div class="card-body text-center">
-                    <div class="avatar-placeholder mb-3">
-                        <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+            <div class="card glass animate-float card-gradient-border mb-4">
+                <div class="card-body text-center p-4">
+                    <div class="badge-icon bg-gradient-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:100px;height:100px">
+                        <i class="bi bi-person-circle" style="font-size: 3.5rem;"></i>
                     </div>
-                    <h4 class="mb-1"><?php echo htmlspecialchars(isset($user['username']) ? $user['username'] : ''); ?></h4>
-                    <p class="text-muted"><?php echo isset($user['role']) && $user['role'] == 'admin' ? '管理员' : '学生'; ?></p>
+                    <h4 class="mb-1 gradient-text"><?php echo htmlspecialchars(isset($user['username']) ? $user['username'] : ''); ?></h4>
+                    <p class="mb-3"><?php echo isset($user['role']) && $user['role'] == 'admin' ? '管理员' : '学生'; ?></p>
                     
                     <?php if (isset($user['role']) && $user['role'] == 'student' && $student): ?>
                     <div class="d-grid gap-2 mt-3">
-                        <a href="<?php echo site_url('student/' . $student['id']); ?>" class="btn btn-outline-primary btn-sm">
+                        <a href="<?php echo site_url('student/' . $student['id']); ?>" class="btn btn-primary btn-rounded btn-shine hover-scale">
                             <i class="bi bi-trophy me-1"></i> 查看我的成就
                         </a>
                     </div>
@@ -34,26 +34,41 @@ unset($_SESSION['flash_type']);
                 </div>
             </div>
             
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">账号信息</h5>
+            <div class="card glass animate-float card-gradient-border">
+                <div class="card-header glass border-0">
+                    <h5 class="card-title mb-0 gradient-text">账号信息</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <div class="mb-3">
-                        <p class="mb-1 small text-muted">账号状态</p>
-                        <p class="mb-0">
-                            <span class="badge bg-<?php echo isset($user['status']) && $user['status'] ? 'success' : 'danger'; ?>">
-                                <?php echo isset($user['status']) && $user['status'] ? '正常' : '已禁用'; ?>
-                            </span>
-                        </p>
+                        <div class="d-flex justify-content-between align-items-center glass p-3 btn-rounded mb-3 hover-scale">
+                            <div>
+                                <p class="mb-0 small">账号状态</p>
+                                <p class="mb-0">
+                                    <span class="badge bg-gradient-<?php echo isset($user['status']) && $user['status'] ? 'success' : 'danger'; ?> btn-shine">
+                                        <?php echo isset($user['status']) && $user['status'] ? '正常' : '已禁用'; ?>
+                                    </span>
+                                </p>
+                            </div>
+                            <i class="bi bi-shield-<?php echo isset($user['status']) && $user['status'] ? 'check' : 'x'; ?> fs-3 text-<?php echo isset($user['status']) && $user['status'] ? 'success' : 'danger'; ?>"></i>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <p class="mb-1 small text-muted">上次登录</p>
-                        <p class="mb-0"><?php echo isset($user['last_login']) && $user['last_login'] ? date('Y-m-d H:i', strtotime($user['last_login'])) : '从未登录'; ?></p>
+                        <div class="d-flex justify-content-between align-items-center glass p-3 btn-rounded mb-3 hover-scale">
+                            <div>
+                                <p class="mb-0 small">上次登录</p>
+                                <p class="mb-0 gradient-text"><?php echo isset($user['last_login']) && $user['last_login'] ? date('Y-m-d H:i', strtotime($user['last_login'])) : '从未登录'; ?></p>
+                            </div>
+                            <i class="bi bi-clock-history fs-3 text-info"></i>
+                        </div>
                     </div>
                     <div class="mb-0">
-                        <p class="mb-1 small text-muted">注册时间</p>
-                        <p class="mb-0"><?php echo isset($user['created_at']) ? date('Y-m-d', strtotime($user['created_at'])) : '未知'; ?></p>
+                        <div class="d-flex justify-content-between align-items-center glass p-3 btn-rounded hover-scale">
+                            <div>
+                                <p class="mb-0 small">注册时间</p>
+                                <p class="mb-0 gradient-text"><?php echo isset($user['created_at']) ? date('Y-m-d', strtotime($user['created_at'])) : '未知'; ?></p>
+                            </div>
+                            <i class="bi bi-calendar-check fs-3 text-success"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,95 +76,146 @@ unset($_SESSION['flash_type']);
         
         <div class="col-md-9">
             <?php if ($flash_message): ?>
-            <div class="alert alert-<?php echo $flash_type; ?> alert-dismissible fade show mb-4" role="alert">
-                <?php echo $flash_message; ?>
+            <div class="alert glass alert-dismissible fade show mb-4 p-3 animate-float" role="alert">
+                <div class="d-flex align-items-center">
+                    <div class="badge-icon bg-gradient-<?php echo $flash_type; ?> text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px">
+                        <i class="bi bi-info-circle fs-4"></i>
+                    </div>
+                    <div>
+                        <?php echo $flash_message; ?>
+                    </div>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <?php endif; ?>
             
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">个人资料</h6>
+            <div class="card glass animate-float card-gradient-border">
+                <div class="card-header glass border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 gradient-text">个人资料</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <form action="<?php echo site_url('profile/update'); ?>" method="post" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?php echo get_csrf_token(); ?>">
                         
                         <?php if (isset($user['role']) && $user['role'] == 'student' && $student): ?>
                         <!-- 学生信息部分 -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="student_id" class="form-label">学号</label>
-                                    <input type="text" class="form-control" id="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>" readonly>
-                                </div>
+                        <div class="card glass mb-4">
+                            <div class="card-header glass border-0">
+                                <h5 class="mb-0 gradient-text">学生信息</h5>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="name" class="form-label">姓名</label>
-                                    <input type="text" class="form-control" id="name" value="<?php echo htmlspecialchars($student['name']); ?>" readonly>
+                            <div class="card-body">
+                                <div class="row mb-4 g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="student_id" class="form-label">学号</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-primary text-white"><i class="bi bi-hash"></i></span>
+                                                <input type="text" class="form-control btn-rounded" id="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="name" class="form-label">姓名</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-secondary text-white"><i class="bi bi-person"></i></span>
+                                                <input type="text" class="form-control btn-rounded" id="name" value="<?php echo htmlspecialchars($student['name']); ?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="class_name" class="form-label">班级</label>
-                                    <input type="text" class="form-control" id="class_name" value="<?php echo htmlspecialchars($student['class_name'] ?: '未设置'); ?>" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="contact" class="form-label">联系方式</label>
-                                    <input type="text" class="form-control" id="contact" value="<?php echo htmlspecialchars($student['contact'] ?: '未设置'); ?>" readonly>
+                                
+                                <div class="row mb-4 g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="class_name" class="form-label">班级</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-info text-white"><i class="bi bi-people"></i></span>
+                                                <input type="text" class="form-control btn-rounded" id="class_name" value="<?php echo htmlspecialchars($student['class_name'] ?: '未设置'); ?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="contact" class="form-label">联系方式</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-warning text-white"><i class="bi bi-telephone"></i></span>
+                                                <input type="text" class="form-control btn-rounded" id="contact" value="<?php echo htmlspecialchars($student['contact'] ?: '未设置'); ?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <?php endif; ?>
                         
                         <!-- 账号设置部分 -->
-                        <h5 class="border-bottom pb-2 mb-4">账号设置</h5>
-                        
-                        <div class="form-group mb-3">
-                            <label for="username" class="form-label">用户名</label>
-                            <input type="text" class="form-control" id="username" value="<?php echo htmlspecialchars(isset($user['username']) ? $user['username'] : ''); ?>" readonly>
+                        <div class="card glass mb-4">
+                            <div class="card-header glass border-0">
+                                <h5 class="mb-0 gradient-text">账号设置</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="username" class="form-label">用户名</label>
+                                    <div class="input-group input-group-glow">
+                                        <span class="input-group-text badge-icon bg-gradient-primary text-white"><i class="bi bi-person-badge"></i></span>
+                                        <input type="text" class="form-control btn-rounded" id="username" value="<?php echo htmlspecialchars(isset($user['username']) ? $user['username'] : ''); ?>" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">邮箱</label>
+                                    <div class="input-group input-group-glow">
+                                        <span class="input-group-text badge-icon bg-gradient-secondary text-white"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control btn-rounded" id="email" name="email" value="<?php echo isset($user['email']) ? htmlspecialchars($user['email']) : ''; ?>">
+                                    </div>
+                                </div>
+                                
+                                <!-- 隐藏主题偏好字段 -->
+                                <input type="hidden" id="theme_preference" name="theme_preference" value="light">
+                            </div>
                         </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="email" class="form-label">邮箱</label>
-                            <input type="email" class="form-control" id="email" name="email" value="<?php echo isset($user['email']) ? htmlspecialchars($user['email']) : ''; ?>">
-                        </div>
-                        
-                        <!-- 隐藏主题偏好字段 -->
-                        <input type="hidden" id="theme_preference" name="theme_preference" value="light">
                         
                         <!-- 密码修改部分 -->
-                        <h5 class="border-bottom pb-2 mb-4">密码修改</h5>
-                        
-                        <div class="form-group mb-3">
-                            <label for="current_password" class="form-label">当前密码</label>
-                            <input type="password" class="form-control" id="current_password" name="current_password">
-                            <div class="form-text">如需修改密码，请先输入当前密码</div>
-                        </div>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="new_password" class="form-label">新密码</label>
-                                    <input type="password" class="form-control" id="new_password" name="new_password">
-                                </div>
+                        <div class="card glass mb-4">
+                            <div class="card-header glass border-0">
+                                <h5 class="mb-0 gradient-text">密码修改</h5>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirm_password" class="form-label">确认新密码</label>
-                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="current_password" class="form-label">当前密码</label>
+                                    <div class="input-group input-group-glow">
+                                        <span class="input-group-text badge-icon bg-gradient-primary text-white"><i class="bi bi-key"></i></span>
+                                        <input type="password" class="form-control btn-rounded" id="current_password" name="current_password">
+                                    </div>
+                                    <div class="form-text">如需修改密码，请先输入当前密码</div>
+                                </div>
+                                
+                                <div class="row mb-4 g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="new_password" class="form-label">新密码</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-secondary text-white"><i class="bi bi-lock"></i></span>
+                                                <input type="password" class="form-control btn-rounded" id="new_password" name="new_password">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="confirm_password" class="form-label">确认新密码</label>
+                                            <div class="input-group input-group-glow">
+                                                <span class="input-group-text badge-icon bg-gradient-info text-white"><i class="bi bi-check2-circle"></i></span>
+                                                <input type="password" class="form-control btn-rounded" id="confirm_password" name="confirm_password">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-shine hover-scale">
                                 <i class="bi bi-save me-1"></i> 保存修改
                             </button>
                         </div>
@@ -166,11 +232,33 @@ unset($_SESSION['flash_type']);
     height: 100px;
     margin: 0 auto;
     border-radius: 50%;
-    background-color: #e9ecef;
+    background-color: rgba(233, 236, 239, 0.3);
+    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #adb5bd;
+    color: #fff;
+}
+
+.input-group-glow {
+    transition: all 0.3s ease;
+}
+
+.input-group-glow:focus-within {
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
+}
+
+.input-focus-glow {
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
+}
+
+.btn-rounded, .input-group-text, .form-control {
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
 }
 </style>
 
@@ -180,6 +268,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form.needs-validation');
     
     if (form) {
+        // 添加输入时的微动画效果
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.input-group').classList.add('input-focus-glow');
+            });
+            input.addEventListener('blur', function() {
+                this.closest('.input-group').classList.remove('input-focus-glow');
+            });
+        });
+        
         form.addEventListener('submit', function(event) {
             let isValid = true;
             

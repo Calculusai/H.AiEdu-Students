@@ -1,0 +1,277 @@
+/* 主题样式 */
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #6f42c1;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+    --brand-gradient: linear-gradient(45deg, #4e73df, #6f42c1);
+    --body-bg: #f8f9fa;
+
+    /* 新增颜色 */
+    --student-color: #7367F0;
+    --student-light: #E8E7FD;
+    --achievement-color: #FF6B9A;
+    --achievement-light: #FFE7EF;
+    --type-color: #39A2DB;
+    --type-light: #E6F4FF;
+}
+
+body {
+    background-color: var(--body-bg);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* ... existing code ... */
+
+/* 现代化渐变文本 */
+.gradient-text {
+    background-image: var(--brand-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: 800;
+}
+
+/* 玻璃态卡片 */
+.glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(78, 115, 223, 0.1);
+}
+
+/* 卡片悬停效果 */
+.hover-scale {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-scale:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(78, 115, 223, 0.15);
+}
+
+/* 卡片渐变边框 */
+.card-gradient {
+    position: relative;
+    z-index: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.card-gradient::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--brand-gradient);
+    background-size: 200% 200%;
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.card-gradient:hover::before {
+    opacity: 0.6;
+}
+
+.card-gradient:hover .card-title,
+.card-gradient:hover .card-text {
+    color: #fff;
+}
+
+.card-gradient .card-body {
+    background: white;
+    border-radius: inherit;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+.card-gradient:hover .card-body {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* 证书图片 */
+.certificate-image {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 自定义徽章 */
+.badge-primary {
+    background: var(--brand-gradient);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 50rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* 按钮光效 */
+.btn-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(30deg);
+    animation: shine 3s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    from {
+        transform: translateX(-100%) rotate(30deg);
+    }
+
+    to {
+        transform: translateX(100%) rotate(30deg);
+    }
+}
+
+/* 脉冲动画 */
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* 自定义表单控件 */
+.custom-select {
+    background-color: #f8f9fc;
+    border-radius: 0.5rem;
+    border: 1px solid #e3e6f0;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.custom-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+/* 分页样式 */
+.pagination .page-link {
+    border-radius: 0.5rem;
+    margin: 0 0.25rem;
+    color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--brand-gradient);
+    border-color: transparent;
+}
+
+/* 新增样式 - 扁平化仪表盘卡片 */
+.stat-card {
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color: white;
+}
+
+.stat-icon-student {
+    background-color: var(--student-color);
+}
+
+.stat-icon-achievement {
+    background-color: var(--achievement-color);
+}
+
+.stat-icon-type {
+    background-color: var(--type-color);
+}
+
+.stat-badge {
+    border-radius: 50rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.stat-badge-student {
+    background-color: var(--student-light);
+    color: var(--student-color);
+}
+
+.stat-badge-achievement {
+    background-color: var(--achievement-light);
+    color: var(--achievement-color);
+}
+
+.stat-badge-type {
+    background-color: var(--type-light);
+    color: var(--type-color);
+}
+
+.rounded-4 {
+    border-radius: 0.75rem !important;
+}
+
+.btn-rounded {
+    border-radius: 50rem;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}

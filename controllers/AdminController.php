@@ -190,11 +190,27 @@ class AdminController {
     }
     
     /**
-     * 导入学生数据（从Excel文件）
+     * 导入学生数据（从CSV文件）
      */
     public function importStudents() {
+        // 调试信息
+        error_log("importStudents方法被调用");
+        error_log("POST数据: " . json_encode($_POST));
+        error_log("FILES数据: " . json_encode($_FILES));
+        
         // 验证CSRF令牌
-        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        if (!isset($_POST['csrf_token'])) {
+            error_log("CSRF令牌不存在");
+            $_SESSION['error_message'] = '安全令牌验证失败，请重试。';
+            redirect(site_url('admin/add_student'));
+            return;
+        }
+        
+        error_log("提交的CSRF令牌: " . $_POST['csrf_token']);
+        error_log("会话中的CSRF令牌: " . ($_SESSION['csrf_token'] ?? 'undefined'));
+        
+        if (!verify_csrf_token($_POST['csrf_token'])) {
+            error_log("CSRF令牌验证失败");
             $_SESSION['error_message'] = '安全令牌验证失败，请重试。';
             redirect(site_url('admin/add_student'));
             return;
@@ -202,7 +218,7 @@ class AdminController {
         
         // 检查是否上传了文件
         if (!isset($_FILES['import_file']) || $_FILES['import_file']['error'] !== UPLOAD_ERR_OK) {
-            $_SESSION['error_message'] = '请选择Excel文件进行导入。';
+            $_SESSION['error_message'] = '请选择CSV文件进行导入。';
             redirect(site_url('admin/add_student'));
             return;
         }
@@ -211,8 +227,8 @@ class AdminController {
         $file_info = pathinfo($_FILES['import_file']['name']);
         $extension = strtolower($file_info['extension']);
         
-        if (!in_array($extension, ['xlsx', 'xls'])) {
-            $_SESSION['error_message'] = '只支持Excel文件格式（.xlsx或.xls）。';
+        if ($extension !== 'csv') {
+            $_SESSION['error_message'] = '只支持CSV文件格式（.csv）。';
             redirect(site_url('admin/add_student'));
             return;
         }
@@ -221,34 +237,36 @@ class AdminController {
         $generate_password = isset($_POST['generate_password']) && $_POST['generate_password'] == 1;
         
         try {
-            // 引入PHPExcel库
-            require_once LIB_PATH . '/vendor/autoload.php';
+            // 读取CSV文件内容
+            $csv_content = file_get_contents($_FILES['import_file']['tmp_name']);
             
-            // 创建reader对象
-            if ($extension == 'xlsx') {
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-            } else {
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            // 检测编码并转换为UTF-8
+            $encoding = mb_detect_encoding($csv_content, ['ASCII', 'UTF-8', 'GB2312', 'GBK', 'BIG5'], true);
+            if ($encoding !== 'UTF-8') {
+                error_log("CSV文件编码非UTF-8，检测到的编码为: " . $encoding);
+                $csv_content = mb_convert_encoding($csv_content, 'UTF-8', $encoding);
+                // 将转换后的内容写回临时文件
+                file_put_contents($_FILES['import_file']['tmp_name'], $csv_content);
             }
             
-            // 加载Excel文件
-            $spreadsheet = $reader->load($_FILES['import_file']['tmp_name']);
-            $worksheet = $spreadsheet->getActiveSheet();
-            $rows = $worksheet->toArray();
-            
-            // 至少需要两行（表头和数据）
-            if (count($rows) < 2) {
-                $_SESSION['error_message'] = 'Excel文件中没有数据。';
-                redirect(site_url('admin/add_student'));
-                return;
+            // 打开CSV文件
+            $file = fopen($_FILES['import_file']['tmp_name'], 'r');
+            if (!$file) {
+                throw new Exception('无法打开CSV文件');
             }
             
-            // 获取表头
-            $headers = array_map('strtolower', $rows[0]);
+            // 读取表头
+            $headers = fgetcsv($file);
+            if (!$headers) {
+                throw new Exception('CSV文件格式错误或为空');
+            }
+            
+            // 转换表头为小写
+            $headers = array_map('trim', array_map('strtolower', $headers));
             
             // 检查必要的列
             if (!in_array('student_id', $headers) || !in_array('name', $headers)) {
-                $_SESSION['error_message'] = 'Excel文件必须包含学号(student_id)和姓名(name)列。';
+                $_SESSION['error_message'] = 'CSV文件必须包含学号(student_id)和姓名(name)列。';
                 redirect(site_url('admin/add_student'));
                 return;
             }
@@ -267,10 +285,11 @@ class AdminController {
             $success_count = 0;
             $error_count = 0;
             $error_rows = [];
+            $row_number = 1; // 从第二行开始，因为第一行是表头
             
-            // 开始导入数据（跳过表头）
-            for ($i = 1; $i < count($rows); $i++) {
-                $row = $rows[$i];
+            // 开始导入数据
+            while (($row = fgetcsv($file)) !== false) {
+                $row_number++;
                 
                 // 跳过空行
                 if (empty($row[$column_map['student_id']]) || empty($row[$column_map['name']])) {
@@ -281,20 +300,27 @@ class AdminController {
                 $student_id = trim($row[$column_map['student_id']]);
                 $name = trim($row[$column_map['name']]);
                 
+                // 确保学生姓名是UTF-8编码
+                if (!mb_check_encoding($name, 'UTF-8')) {
+                    $name = mb_convert_encoding($name, 'UTF-8', 'auto');
+                }
+                
+                error_log("导入学生: 学号={$student_id}, 姓名={$name}, 编码=" . mb_detect_encoding($name));
+                
                 // 准备学生数据
                 $studentData = [
                     'student_id' => $student_id,
                     'name' => $name,
-                    'class_name' => isset($column_map['class_name']) ? trim($row[$column_map['class_name']]) : '',
-                    'contact' => isset($column_map['contact']) ? trim($row[$column_map['contact']]) : '',
-                    'notes' => isset($column_map['notes']) ? trim($row[$column_map['notes']]) : ''
+                    'class_name' => isset($column_map['class_name']) && isset($row[$column_map['class_name']]) ? trim($row[$column_map['class_name']]) : '',
+                    'contact' => isset($column_map['contact']) && isset($row[$column_map['contact']]) ? trim($row[$column_map['contact']]) : '',
+                    'notes' => isset($column_map['notes']) && isset($row[$column_map['notes']]) ? trim($row[$column_map['notes']]) : ''
                 ];
                 
                 // 准备用户数据
-                $email = isset($column_map['email']) ? trim($row[$column_map['email']]) : '';
+                $email = isset($column_map['email']) && isset($row[$column_map['email']]) ? trim($row[$column_map['email']]) : '';
                 
                 // 设置密码
-                if (isset($column_map['password']) && !empty($row[$column_map['password']])) {
+                if (isset($column_map['password']) && isset($row[$column_map['password']]) && !empty($row[$column_map['password']])) {
                     $password = trim($row[$column_map['password']]);
                 } else if ($generate_password) {
                     // 自动生成8位随机密码
@@ -321,7 +347,7 @@ class AdminController {
                     
                     if ($result && $result['count'] > 0) {
                         $error_rows[] = [
-                            'row' => $i + 1,
+                            'row' => $row_number,
                             'student_id' => $student_id,
                             'name' => $name,
                             'error' => '学号已存在'
@@ -337,7 +363,7 @@ class AdminController {
                         
                         if ($result && $result['count'] > 0) {
                             $error_rows[] = [
-                                'row' => $i + 1,
+                                'row' => $row_number,
                                 'student_id' => $student_id,
                                 'name' => $name,
                                 'error' => '邮箱已被使用'
@@ -354,7 +380,7 @@ class AdminController {
                         $success_count++;
                     } else {
                         $error_rows[] = [
-                            'row' => $i + 1,
+                            'row' => $row_number,
                             'student_id' => $student_id,
                             'name' => $name,
                             'error' => '创建失败'
@@ -363,7 +389,7 @@ class AdminController {
                     }
                 } catch (Exception $e) {
                     $error_rows[] = [
-                        'row' => $i + 1,
+                        'row' => $row_number,
                         'student_id' => $student_id,
                         'name' => $name,
                         'error' => $e->getMessage()
@@ -371,6 +397,9 @@ class AdminController {
                     $error_count++;
                 }
             }
+            
+            // 关闭CSV文件
+            fclose($file);
             
             // 设置导入结果消息
             if ($success_count > 0) {
@@ -410,44 +439,41 @@ class AdminController {
      * 下载学生导入模板
      */
     public function downloadTemplate() {
-        // 设置Excel文件信息
-        $filename = '学生导入模板.xlsx';
+        // 设置CSV文件信息
+        $filename = '学生导入模板.csv';
         $headers = ['学号(student_id)', '姓名(name)', '班级(class_name)', '联系方式(contact)', '邮箱(email)', '备注(notes)', '密码(password)'];
         
-        // 创建Spreadsheet对象
-        require_once LIB_PATH . '/vendor/autoload.php';
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        // 示例数据
+        $example_data = [
+            '20210001',
+            '张三',
+            '计算机科学1班',
+            '13800138000',
+            'zhangsan@example.com',
+            '班长',
+            'password123'
+        ];
         
-        // 设置表头
-        for ($i = 0; $i < count($headers); $i++) {
-            $sheet->setCellValue(chr(65 + $i) . '1', $headers[$i]);
-            $sheet->getStyle(chr(65 + $i) . '1')->getFont()->setBold(true);
-        }
+        // 设置响应头
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
         
-        // 设置示例数据
-        $sheet->setCellValue('A2', '20210001');
-        $sheet->setCellValue('B2', '张三');
-        $sheet->setCellValue('C2', '计算机科学1班');
-        $sheet->setCellValue('D2', '13800138000');
-        $sheet->setCellValue('E2', 'zhangsan@example.com');
-        $sheet->setCellValue('F2', '班长');
-        $sheet->setCellValue('G2', 'password123');
+        // 创建输出流
+        $output = fopen('php://output', 'w');
         
-        // 设置列宽
-        foreach (range('A', 'G') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+        // 添加UTF-8 BOM，解决Excel打开CSV中文乱码问题
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
         
-        // 创建writer
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        // 写入表头
+        fputcsv($output, $headers);
         
-        // 输出文件
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
+        // 写入示例数据
+        fputcsv($output, $example_data);
         
-        $writer->save('php://output');
+        // 关闭输出流
+        fclose($output);
         exit;
     }
     
@@ -458,24 +484,56 @@ class AdminController {
         $page_title = '学生管理';
         $active_page = 'admin_students';
         
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
+        
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         
         // 获取搜索条件
         $search = isset($_GET['search']) ? sanitize_input($_GET['search']) : '';
         
+        // 获取筛选条件
+        $filter_class = isset($_GET['class']) ? sanitize_input($_GET['class']) : '';
+        $filter_grade = isset($_GET['grade']) ? sanitize_input($_GET['grade']) : '';
+        $filter_status = isset($_GET['status']) !== false ? sanitize_input($_GET['status']) : '';
+        
         // 构建查询
-        $sql = "SELECT s.*, u.username, COUNT(a.id) as achievement_count 
+        $sql = "SELECT s.*, u.username, u.last_login, u.status, COUNT(a.id) as achievement_count 
                 FROM " . TABLE_PREFIX . "students s
                 LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id
                 LEFT JOIN " . TABLE_PREFIX . "achievements a ON s.id = a.student_id";
         
         $params = [];
+        $whereConditions = [];
         
         // 添加搜索条件
         if (!empty($search)) {
-            $sql .= " WHERE s.name LIKE :search OR s.school LIKE :search OR s.grade LIKE :search";
+            $whereConditions[] = "(s.name LIKE :search OR s.student_id LIKE :search OR s.class_name LIKE :search)";
             $params['search'] = "%{$search}%";
+        }
+        
+        // 添加班级筛选
+        if (!empty($filter_class)) {
+            $whereConditions[] = "s.class_name = :class";
+            $params['class'] = $filter_class;
+        }
+        
+        // 添加年级筛选
+        if (!empty($filter_grade)) {
+            $whereConditions[] = "s.grade = :grade";
+            $params['grade'] = $filter_grade;
+        }
+        
+        // 添加账号状态筛选
+        if ($filter_status !== '') {
+            $whereConditions[] = "u.status = :status";
+            $params['status'] = (int)$filter_status;
+        }
+        
+        // 组合WHERE子句
+        if (!empty($whereConditions)) {
+            $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
         
         // 添加分组
@@ -486,8 +544,10 @@ class AdminController {
         
         // 获取总记录数
         $countSql = "SELECT COUNT(*) as total FROM " . TABLE_PREFIX . "students s";
-        if (!empty($search)) {
-            $countSql .= " WHERE s.name LIKE :search OR s.school LIKE :search OR s.grade LIKE :search";
+        if (!empty($whereConditions)) {
+            // 连接用户表，因为需要用到status筛选
+            $countSql .= " LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id";
+            $countSql .= " WHERE " . implode(' AND ', $whereConditions);
         }
         $totalResult = $this->db->query($countSql, $params);
         $total = $totalResult ? $totalResult['total'] : 0;
@@ -503,9 +563,27 @@ class AdminController {
         // 执行查询
         $students = $this->db->queryAll($sql, $params);
         
+        // 获取班级列表（用于筛选表单）
+        $sql = "SELECT DISTINCT class_name FROM " . TABLE_PREFIX . "students WHERE class_name IS NOT NULL AND class_name != '' ORDER BY class_name";
+        $classes = array_column($this->db->queryAll($sql), 'class_name');
+        
+        // 获取年级列表（用于筛选表单）
+        $sql = "SELECT DISTINCT grade FROM " . TABLE_PREFIX . "students WHERE grade IS NOT NULL AND grade != '' ORDER BY grade";
+        $grades = array_column($this->db->queryAll($sql), 'grade');
+        
         // 生成分页HTML
-        $pagination = get_pagination($total, $this->itemsPerPage, $page, '?page=%d' . 
-                                    (!empty($search) ? '&search=' . urlencode($search) : ''));
+        $paginationParams = [];
+        if (!empty($search)) $paginationParams[] = 'search=' . urlencode($search);
+        if (!empty($filter_class)) $paginationParams[] = 'class=' . urlencode($filter_class);
+        if (!empty($filter_grade)) $paginationParams[] = 'grade=' . urlencode($filter_grade);
+        if ($filter_status !== '') $paginationParams[] = 'status=' . $filter_status;
+        
+        $paginationUrl = '?page=%d';
+        if (!empty($paginationParams)) {
+            $paginationUrl .= '&' . implode('&', $paginationParams);
+        }
+        
+        $pagination = get_pagination($total, $this->itemsPerPage, $page, $paginationUrl);
         
         include_once VIEW_PATH . '/admin/students.php';
     }
@@ -516,6 +594,9 @@ class AdminController {
     public function listAchievements() {
         $page_title = '成就管理';
         $active_page = 'admin_achievements';
+        
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
         
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -671,7 +752,13 @@ class AdminController {
         if ($result) {
             $_SESSION['flash_message'] = '成就添加成功！';
             $_SESSION['flash_type'] = 'success';
-            redirect(site_url('admin/achievements'));
+            
+            // 检查是否是从学生成就页面跳转来的
+            if (isset($_GET['student_id']) && (int)$_GET['student_id'] > 0) {
+                redirect(site_url('admin/students/achievements/' . $student_id));
+            } else {
+                redirect(site_url('admin/achievements'));
+            }
         } else {
             $_SESSION['flash_message'] = '成就添加失败，请重试。';
             $_SESSION['flash_type'] = 'danger';
@@ -855,7 +942,12 @@ class AdminController {
             $_SESSION['flash_type'] = 'danger';
         }
         
-        redirect(site_url('admin/achievements'));
+        // 检查是否需要重定向回学生成就页面
+        if (isset($_POST['redirect_to_student']) && (int)$_POST['redirect_to_student'] > 0) {
+            redirect(site_url('admin/students/achievements/' . (int)$_POST['redirect_to_student']));
+        } else {
+            redirect(site_url('admin/achievements'));
+        }
     }
     
     /**
@@ -1000,11 +1092,21 @@ class AdminController {
         // 从POST数据中提取设置
         $settings = [];
         foreach ($_POST as $key => $value) {
-            if ($key != 'csrf_token' && $key != 'setting_group') {
+            if ($key != 'csrf_token' && $key != 'setting_group' && $key != 'is_security_setting') {
+                // 处理数组值（如密码策略）
+                if (is_array($value)) {
+                    $settings[$key] = $value;
+                    // 对数组中的每个元素进行sanitize_input处理
+                    foreach ($settings[$key] as $subKey => $subValue) {
+                        $settings[$key][$subKey] = sanitize_input($subValue);
+                    }
+                } 
                 // 复选框特殊处理
-                if (strpos($key, 'enable_') === 0 || strpos($key, 'allow_') === 0) {
+                else if (strpos($key, 'enable_') === 0 || strpos($key, 'allow_') === 0) {
                     $settings[$key] = isset($_POST[$key]) ? 1 : 0;
-                } else {
+                } 
+                // 普通字符串值
+                else {
                     $settings[$key] = sanitize_input($value);
                 }
             }
@@ -1019,6 +1121,31 @@ class AdminController {
             $_SESSION['flash_message'] = '设置已成功保存！';
             $_SESSION['flash_type'] = 'success';
             $_SESSION['settings_saved'] = true;
+            
+            // 记录当前设置的标签页到session，用于前端自动刷新
+            $_SESSION['tab'] = $group;
+            
+            // 安全设置特殊处理
+            if ($group === 'security' || isset($_POST['is_security_setting'])) {
+                // 如果是安全设置，更新config.php中的安全相关常量
+                if (isset($settings['login_attempts'])) {
+                    // 可以在这里同步更新config.php中的安全相关常量
+                    // $this->updateConfigConstant('LOGIN_ATTEMPTS', $settings['login_attempts']);
+                }
+                
+                // 记录安全设置已更新，前端将使用此标记来触发页面刷新
+                $_SESSION['security_settings_updated'] = true;
+            }
+            
+            // 如果修改了网站名称，同步更新config.php中的常量
+            if ($group === 'general' && isset($settings['site_name'])) {
+                $this->updateConfigConstant('SITE_NAME', $settings['site_name']);
+            }
+            
+            // 如果更新了其他关键设置，也可以在这里同步到config.php
+            if ($group === 'general' && isset($settings['site_description'])) {
+                // 将来可以添加其他全局配置同步
+            }
         } else {
             $_SESSION['flash_message'] = '保存设置失败，请重试。';
             $_SESSION['flash_type'] = 'danger';
@@ -1026,6 +1153,49 @@ class AdminController {
         
         // 重定向回设置页面，并保持当前标签页
         redirect(site_url('admin/settings?tab=' . $group));
+    }
+    
+    /**
+     * 更新config.php文件中的常量值
+     *
+     * @param string $constant 常量名
+     * @param string $value 新值
+     * @return bool 是否成功
+     */
+    private function updateConfigConstant($constant, $value) {
+        try {
+            $configFile = BASE_PATH . '/config.php';
+            
+            // 确保文件存在且可写
+            if (!file_exists($configFile) || !is_writable($configFile)) {
+                error_log("配置文件不存在或不可写: {$configFile}");
+                return false;
+            }
+            
+            // 读取当前配置文件内容
+            $content = file_get_contents($configFile);
+            
+            // 转义值中的特殊字符（如引号）
+            $escapedValue = str_replace("'", "\'", $value);
+            
+            // 使用正则表达式替换常量值
+            $pattern = "/define\s*\(\s*['\"]" . preg_quote($constant, '/') . "['\"][\s,]*['\"].*['\"]\s*\)/";
+            $replacement = "define('{$constant}', '{$escapedValue}')";
+            
+            // 替换并写回文件
+            $newContent = preg_replace($pattern, $replacement, $content);
+            
+            if ($newContent !== $content) {
+                file_put_contents($configFile, $newContent);
+                return true;
+            }
+            
+            error_log("没有找到要替换的常量: {$constant}");
+            return false;
+        } catch (Exception $e) {
+            error_log("更新配置常量时出错: " . $e->getMessage());
+            return false;
+        }
     }
     
     /**
@@ -1154,6 +1324,17 @@ class AdminController {
         $result = $this->db->query($sql, ['student_id' => $id]);
         $stats['total_points'] = $result ? (float)$result['total_points'] : 0;
         
+        // 获取学生成就列表（用于显示在侧边栏）
+        $student_achievements = [];
+        if ($stats['achievements_count'] > 0) {
+            $sql = "SELECT a.*, 'fas fa-trophy' as icon, DATE_FORMAT(a.achieved_date, '%Y-%m-%d') as achieved_at 
+                    FROM " . TABLE_PREFIX . "achievements a 
+                    WHERE a.student_id = :student_id 
+                    ORDER BY a.achieved_date DESC 
+                    LIMIT 5";
+            $student_achievements = $this->db->queryAll($sql, ['student_id' => $id]);
+        }
+        
         // 获取学生最近活动记录
         $recent_activities = [];
         
@@ -1225,14 +1406,21 @@ class AdminController {
         ];
         
         // 处理密码更改
-        $password = isset($_POST['password']) ? sanitize_input($_POST['password']) : '';
+        $password = isset($_POST['new_password']) ? sanitize_input($_POST['new_password']) : '';
         if (!empty($password)) {
-            $userData['password'] = $password;
+            $userData['password'] = password_hash($password, PASSWORD_DEFAULT);
             
             // 如果勾选了"要求下次登录修改密码"，则设置标志
-            if (isset($_POST['require_change_password']) && $_POST['require_change_password'] == 1) {
+            if (isset($_POST['require_password_change']) && $_POST['require_password_change'] == 1) {
                 $userData['require_password_change'] = 1;
             }
+        }
+        
+        // 即使未更改密码，也处理require_password_change状态
+        if (isset($_POST['require_password_change']) && $_POST['require_password_change'] == 1) {
+            $userData['require_password_change'] = 1;
+        } else {
+            $userData['require_password_change'] = 0;
         }
         
         // 更新学生信息
@@ -1269,6 +1457,9 @@ class AdminController {
         // 设置页面标题
         $page_title = $student['name'] . ' 的成就管理';
         $active_page = 'admin_students';
+        
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
         
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -1326,5 +1517,335 @@ class AdminController {
         
         // 加载视图
         include_once VIEW_PATH . '/admin/student_achievements.php';
+    }
+
+    /**
+     * 显示学生详情页面
+     *
+     * @param int $id 学生ID
+     */
+    public function viewStudent($id) {
+        $id = (int)$id;
+        
+        // 获取学生信息
+        require_once MODEL_PATH . '/Student.php';
+        $studentModel = new Student();
+        $student = $studentModel->getStudentWithInfo($id);
+        
+        if (!$student) {
+            $_SESSION['error_message'] = '找不到指定的学生。';
+            redirect(site_url('admin/students'));
+            return;
+        }
+        
+        // 设置页面标题
+        $page_title = '查看学生详情';
+        $active_page = 'admin_students';
+        
+        // 加载模态框样式
+        $extra_css = '<link rel="stylesheet" href="' . asset_url('css/modals.css') . '">';
+        
+        // 获取学生统计信息
+        $stats = [];
+        $stats['achievements_count'] = $this->getCount(TABLE_PREFIX . 'achievements', 'COUNT(*)', "student_id = " . $id);
+        $sql = "SELECT SUM(score) as total_points FROM " . TABLE_PREFIX . "achievements WHERE student_id = :student_id AND score IS NOT NULL";
+        $result = $this->db->query($sql, ['student_id' => $id]);
+        $stats['total_points'] = $result ? (float)$result['total_points'] : 0;
+        
+        // 获取学生成就列表（用于显示在侧边栏）
+        $student_achievements = [];
+        if ($stats['achievements_count'] > 0) {
+            $sql = "SELECT a.*, 'fas fa-trophy' as icon, DATE_FORMAT(a.achieved_date, '%Y-%m-%d') as achieved_at 
+                    FROM " . TABLE_PREFIX . "achievements a 
+                    WHERE a.student_id = :student_id 
+                    ORDER BY a.achieved_date DESC 
+                    LIMIT 5";
+            $student_achievements = $this->db->queryAll($sql, ['student_id' => $id]);
+        }
+        
+        // 获取学生最近活动记录
+        $activity_logs = $this->getStudentActivityLogs($id, 5);
+        
+        include_once VIEW_PATH . '/admin/view_student.php';
+    }
+    
+    /**
+     * 获取学生活动记录
+     *
+     * @param int $student_id 学生ID
+     * @param int $limit 限制记录数
+     * @return array 活动记录
+     */
+    private function getStudentActivityLogs($student_id, $limit = 5) {
+        // 此处可以查询学生的活动记录表
+        // 由于系统可能还没有活动记录表，所以这里返回空数组
+        return [];
+    }
+
+    /**
+     * 删除学生
+     * 
+     * @param int $id 学生ID
+     * @return void
+     */
+    public function deleteStudent($id) {
+        // 调试信息
+        error_log("deleteStudent方法被调用，ID: " . $id);
+        error_log("POST数据: " . json_encode($_POST));
+        
+        // 验证CSRF令牌
+        if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error_message'] = '安全验证失败，请重试。';
+            redirect(site_url('admin/students'));
+            return;
+        }
+
+        // 检查学生是否存在
+        $sql = "SELECT * FROM " . TABLE_PREFIX . "students WHERE id = :id";
+        $student = $this->db->query($sql, ['id' => $id]);
+        
+        if (!$student) {
+            $_SESSION['error_message'] = '学生不存在，无法删除。';
+            redirect(site_url('admin/students'));
+            return;
+        }
+        
+        // 查询与此学生关联的用户ID
+        $sql = "SELECT user_id FROM " . TABLE_PREFIX . "students WHERE id = :id";
+        $result = $this->db->query($sql, ['id' => $id]);
+        $user_id = $result ? $result['user_id'] : null;
+        
+        // 开始事务
+        $this->db->beginTransaction();
+        
+        try {
+            // 先删除学生的所有成就记录
+            $sql = "DELETE FROM " . TABLE_PREFIX . "achievements WHERE student_id = :student_id";
+            $this->db->exec($sql, ['student_id' => $id]);
+            
+            // 删除学生记录
+            $sql = "DELETE FROM " . TABLE_PREFIX . "students WHERE id = :id";
+            $this->db->exec($sql, ['id' => $id]);
+            
+            // 如果有关联的用户账号，也删除用户账号
+            if ($user_id) {
+                $sql = "DELETE FROM " . TABLE_PREFIX . "users WHERE id = :id";
+                $this->db->exec($sql, ['id' => $user_id]);
+            }
+            
+            // 提交事务
+            $this->db->commit();
+            
+            $_SESSION['success_message'] = '学生删除成功。';
+        } catch (Exception $e) {
+            // 回滚事务
+            $this->db->rollBack();
+            
+            // 记录错误信息
+            error_log("删除学生错误: " . $e->getMessage());
+            
+            $_SESSION['error_message'] = '删除学生失败，请重试。';
+        }
+        
+        // 重定向回学生列表
+        redirect(site_url('admin/students'));
+    }
+
+    /**
+     * 处理批量操作请求
+     */
+    public function bulkAction() {
+        // 验证CSRF令牌
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $_SESSION['error_message'] = '安全令牌验证失败，请重试。';
+            redirect(site_url('admin/students'));
+            return;
+        }
+        
+        // 检查操作类型
+        $action = isset($_POST['action']) ? sanitize_input($_POST['action']) : '';
+        
+        // 检查选中的学生
+        $selectedStudents = isset($_POST['selected_students']) ? $_POST['selected_students'] : [];
+        
+        if (empty($selectedStudents) || !is_array($selectedStudents)) {
+            $_SESSION['error_message'] = '请至少选择一名学生。';
+            redirect(site_url('admin/students'));
+            return;
+        }
+        
+        // 将ID转换为整数
+        $selectedStudents = array_map('intval', $selectedStudents);
+        
+        // 根据操作类型执行不同的操作
+        switch ($action) {
+            case 'delete':
+                $this->bulkDeleteStudents($selectedStudents);
+                break;
+                
+            // 可以在这里添加其他批量操作类型
+            
+            default:
+                $_SESSION['error_message'] = '未知的操作类型。';
+                redirect(site_url('admin/students'));
+                break;
+        }
+    }
+    
+    /**
+     * 批量删除学生
+     * 
+     * @param array $studentIds 学生ID数组
+     */
+    private function bulkDeleteStudents($studentIds) {
+        if (empty($studentIds)) {
+            return;
+        }
+        
+        // 开始事务
+        $this->db->beginTransaction();
+        
+        try {
+            // 获取关联的用户ID
+            $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
+            $sql = "SELECT id, user_id FROM " . TABLE_PREFIX . "students WHERE id IN ({$placeholders})";
+            $students = $this->db->queryAll($sql, $studentIds);
+            
+            // 提取用户ID
+            $userIds = [];
+            foreach ($students as $student) {
+                if (!empty($student['user_id'])) {
+                    $userIds[] = $student['user_id'];
+                }
+            }
+            
+            // 删除成就记录
+            if (!empty($studentIds)) {
+                $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
+                $sql = "DELETE FROM " . TABLE_PREFIX . "achievements WHERE student_id IN ({$placeholders})";
+                $this->db->exec($sql, $studentIds);
+            }
+            
+            // 删除学生记录
+            if (!empty($studentIds)) {
+                $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
+                $sql = "DELETE FROM " . TABLE_PREFIX . "students WHERE id IN ({$placeholders})";
+                $this->db->exec($sql, $studentIds);
+            }
+            
+            // 删除用户记录
+            if (!empty($userIds)) {
+                $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+                $sql = "DELETE FROM " . TABLE_PREFIX . "users WHERE id IN ({$placeholders})";
+                $this->db->exec($sql, $userIds);
+            }
+            
+            // 提交事务
+            $this->db->commit();
+            
+            $_SESSION['success_message'] = '成功删除 ' . count($studentIds) . ' 名学生。';
+        } catch (Exception $e) {
+            // 回滚事务
+            $this->db->rollBack();
+            
+            // 记录错误信息
+            error_log("批量删除学生错误: " . $e->getMessage());
+            
+            $_SESSION['error_message'] = '删除学生失败，请重试。';
+        }
+        
+        redirect(site_url('admin/students'));
+    }
+    
+    /**
+     * 导出学生数据到Excel
+     * 
+     * @return void
+     */
+    public function exportStudents() {
+        // 检查是否指定了特定学生
+        $selectedIds = [];
+        if (isset($_GET['ids']) && !empty($_GET['ids'])) {
+            $selectedIds = array_map('intval', explode(',', $_GET['ids']));
+        }
+        
+        // 构建查询
+        $sql = "SELECT s.*, u.email, u.status, u.last_login, COUNT(a.id) as achievement_count 
+                FROM " . TABLE_PREFIX . "students s
+                LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id
+                LEFT JOIN " . TABLE_PREFIX . "achievements a ON s.id = a.student_id";
+        
+        $params = [];
+        $whereConditions = [];
+        
+        // 如果选择了特定学生，则只导出这些学生的数据
+        if (!empty($selectedIds)) {
+            $placeholders = implode(',', array_fill(0, count($selectedIds), '?'));
+            $whereConditions[] = "s.id IN ({$placeholders})";
+            $params = $selectedIds;
+        }
+        
+        // 组合WHERE子句
+        if (!empty($whereConditions)) {
+            $sql .= " WHERE " . implode(' AND ', $whereConditions);
+        }
+        
+        // 添加分组和排序
+        $sql .= " GROUP BY s.id ORDER BY s.name";
+        
+        // 执行查询
+        $students = $this->db->queryAll($sql, $params);
+        
+        // 如果没有学生数据，返回提示
+        if (empty($students)) {
+            $_SESSION['error_message'] = '没有找到学生数据可供导出';
+            redirect(site_url('admin/students'));
+            return;
+        }
+        
+        // 设置文件名
+        $filename = 'students_export_' . date('Ymd_His') . '.csv';
+        
+        // 设置CSV表头
+        $headers = [
+            '学号', '姓名', '班级', '联系方式', '邮箱', '账号状态', '最后登录', '成就数量', '注册时间', '备注'
+        ];
+        
+        // 设置响应头
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // 创建输出流
+        $output = fopen('php://output', 'w');
+        
+        // 添加UTF-8 BOM，解决Excel打开CSV中文乱码问题
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // 写入表头
+        fputcsv($output, $headers);
+        
+        // 写入数据行
+        foreach ($students as $student) {
+            $row = [
+                $student['student_id'],
+                $student['name'],
+                $student['class_name'] ?? '',
+                $student['contact'] ?? '',
+                $student['email'] ?? '',
+                $student['status'] == 1 ? '启用' : '禁用',
+                !empty($student['last_login']) ? date('Y-m-d H:i:s', strtotime($student['last_login'])) : '尚未登录',
+                $student['achievement_count'] ?? 0,
+                date('Y-m-d H:i:s', strtotime($student['created_at'])),
+                $student['notes'] ?? ''
+            ];
+            
+            fputcsv($output, $row);
+        }
+        
+        // 关闭输出流
+        fclose($output);
+        exit;
     }
 } 

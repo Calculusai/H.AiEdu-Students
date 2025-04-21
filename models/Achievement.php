@@ -239,4 +239,39 @@ class Achievement extends Model {
             'types' => $types
         ];
     }
+    
+    /**
+     * 统计符合筛选条件的成就数量
+     *
+     * @param string $where_sql 筛选WHERE子句
+     * @param array $params 筛选参数
+     * @return int 成就总数
+     */
+    public function countWithFilters($where_sql, $params = []) {
+        $count_sql = "SELECT COUNT(*) as total FROM {$this->table} a" . $where_sql;
+        $result = $this->db->query($count_sql, $params);
+        return $result ? (int)$result['total'] : 0;
+    }
+    
+    /**
+     * 获取筛选后的成就列表，包含学生信息
+     *
+     * @param string $where_sql 筛选WHERE子句
+     * @param array $params 筛选参数
+     * @param int $page 当前页码
+     * @param int $per_page 每页记录数
+     * @return array 成就列表
+     */
+    public function getFilteredAchievements($where_sql, $params = [], $page = 1, $per_page = 9) {
+        $offset = ($page - 1) * $per_page;
+        
+        $sql = "SELECT a.*, s.name as student_name 
+                FROM {$this->table} a 
+                JOIN " . TABLE_PREFIX . "students s ON a.student_id = s.id
+                " . $where_sql . "
+                ORDER BY a.achieved_date DESC 
+                LIMIT {$offset}, {$per_page}";
+        
+        return $this->db->queryAll($sql, $params);
+    }
 } 
