@@ -151,24 +151,33 @@ $total_pages = ceil($total_records / $per_page);
                 <div class="row g-4">
                     <?php foreach ($filtered_achievements as $achievement): ?>
                     <div class="col-md-6 col-lg-4">
-                        <div class="achievement-card">
+                        <div class="achievement-card certificate-style">
+                            <div class="certificate-border"></div>
+                            <div class="certificate-seal"></div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <span class="badge"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span>
-                                    <small class="achievement-detail-date">
-                                        <i class="bi bi-calendar3 me-1"></i><?php echo date('Y-m-d', strtotime($achievement['achieved_date'])); ?>
+                                <div class="certificate-header">
+                                    <div class="certificate-ribbon">
+                                        <span class="badge-certificate"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span>
+                                    </div>
+                                    <small class="certificate-date">
+                                        <i class="bi bi-calendar-check me-1"></i><?php echo date('Y-m-d', strtotime($achievement['achieved_date'])); ?>
                                     </small>
                                 </div>
                                 
-                                <h5 class="card-title"><?php echo htmlspecialchars($achievement['title']); ?></h5>
-                                
-                                <div class="student-info">
-                                    <div class="student-avatar">
-                                        <i class="bi bi-person"></i>
-                                    </div>
-                                    <span><?php echo htmlspecialchars($achievement['student_name']); ?></span>
+                                <div class="certificate-title-container">
+                                    <h5 class="certificate-title"><?php echo htmlspecialchars($achievement['title']); ?></h5>
                                 </div>
                                 
+                                <div class="certificate-student">
+                                    <div class="student-medal">
+                                        <i class="bi bi-person-badge"></i>
+                                    </div>
+                                    <span class="student-name"><?php echo htmlspecialchars($achievement['student_name']); ?></span>
+                                </div>
+                                
+                                <style>
+
+                                </style>
                                 <p class="card-text">
                                     <?php echo strlen($achievement['description']) > 80 ? substr(htmlspecialchars($achievement['description']), 0, 80) . '...' : htmlspecialchars($achievement['description']); ?>
                                 </p>
@@ -189,43 +198,94 @@ $total_pages = ceil($total_records / $per_page);
                         <!-- 成就详情模态框 -->
                         <div class="modal fade achievement-modal" id="achievementModal<?php echo $achievement['id']; ?>" tabindex="-1" aria-labelledby="achievementModalLabel<?php echo $achievement['id']; ?>" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="achievementModalLabel<?php echo $achievement['id']; ?>"><?php echo htmlspecialchars($achievement['title']); ?></h5>
+                                <div class="modal-content glass">
+                                    <div class="modal-header border-bottom-0">
+                                        <h5 class="modal-title gradient-text" id="achievementModalLabel<?php echo $achievement['id']; ?>"><?php echo htmlspecialchars($achievement['title']); ?></h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div class="modal-body p-4">
                                         <div class="d-flex justify-content-between mb-4">
-                                            <span class="achievement-detail-badge"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span>
-                                            <span class="achievement-detail-date"><i class="bi bi-calendar3 me-1"></i><?php echo date('Y-m-d', strtotime($achievement['achieved_date'])); ?></span>
+                                            <span class="badge badge-primary"><?php echo htmlspecialchars($achievement['achievement_type']); ?></span>
+                                            <span class="text-muted"><i class="bi bi-calendar3 me-1"></i><?php echo date('Y-m-d', strtotime($achievement['achieved_date'])); ?></span>
                                         </div>
                                         
-                                        <div class="student-profile">
-                                            <div class="student-avatar-lg">
-                                                <i class="bi bi-person"></i>
+                                        <div class="student-profile mb-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="student-medal me-3">
+                                                    <i class="bi bi-person-fill"></i>
+                                                </div>
+                                                <div class="student-name"><?php echo htmlspecialchars($achievement['student_name']); ?></div>
                                             </div>
-                                            <span class="fs-5"><?php echo htmlspecialchars($achievement['student_name']); ?></span>
                                         </div>
                                         
-                                        <div class="mb-4">
-                                            <h6 class="section-title">成就描述</h6>
-                                            <div class="section-content">
-                                                <?php echo nl2br(htmlspecialchars($achievement['description'])); ?>
+                                        <div class="card glass mb-4 animate-float">
+                                            <div class="card-body p-3">
+                                                <h6 class="gradient-text mb-3">成就描述</h6>
+                                                <div class="card-text">
+                                                    <?php echo nl2br(htmlspecialchars($achievement['description'])); ?>
+                                                </div>
                                             </div>
                                         </div>
                                         
                                         <?php if (!empty($achievement['achievement_details'])): ?>
-                                        <div class="mb-4">
-                                            <h6 class="section-title">成就详情</h6>
-                                            <div class="section-content">
-                                                <?php echo nl2br(htmlspecialchars($achievement['achievement_details'])); ?>
+                                        <div class="card glass mb-4 animate-float">
+                                            <div class="card-body p-3">
+                                                <h6 class="gradient-text mb-3">成就详情</h6>
+                                                <div class="card-text">
+                                                    <?php echo nl2br(htmlspecialchars($achievement['achievement_details'])); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endif; ?>
+                                        
+                                        <?php if (!empty($achievement['certificate_no']) || !empty($achievement['issue_authority']) || !empty($achievement['score'])): ?>
+                                        <div class="card glass animate-float">
+                                            <div class="card-body p-3">
+                                                <h6 class="gradient-text mb-3">证书信息</h6>
+                                                <div class="row g-3">
+                                                    <?php if (!empty($achievement['certificate_no'])): ?>
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-upc me-2 text-primary"></i>
+                                                            <div>
+                                                                <small class="text-muted d-block">证书编号</small>
+                                                                <span><?php echo htmlspecialchars($achievement['certificate_no']); ?></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    
+                                                    <?php if (!empty($achievement['issue_authority'])): ?>
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-building me-2 text-primary"></i>
+                                                            <div>
+                                                                <small class="text-muted d-block">颁发机构</small>
+                                                                <span><?php echo htmlspecialchars($achievement['issue_authority']); ?></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    
+                                                    <?php if (!empty($achievement['score'])): ?>
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-star-fill me-2 text-warning"></i>
+                                                            <div>
+                                                                <small class="text-muted d-block">成绩/分数</small>
+                                                                <span><?php echo htmlspecialchars($achievement['score']); ?></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
                                         </div>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="modal-footer border-top-0">
                                         <?php if (!empty($achievement['attachment'])): ?>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#certificateModal<?php echo $achievement['id']; ?>" data-bs-dismiss="modal">
+                                        <button type="button" class="btn btn-primary btn-shine" data-bs-toggle="modal" data-bs-target="#certificateModal<?php echo $achievement['id']; ?>" data-bs-dismiss="modal">
                                             <i class="bi bi-award me-2"></i>查看证书
                                         </button>
                                         <?php endif; ?>

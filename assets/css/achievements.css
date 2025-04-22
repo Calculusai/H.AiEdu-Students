@@ -167,6 +167,7 @@
   color: #666;
   margin-bottom: 1.5rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .achievement-card .card-footer {
@@ -263,54 +264,6 @@
   padding: 1rem 1.5rem;
 }
 
-.achievement-detail-badge {
-  background: rgba(var(--primary-rgb), 0.1);
-  color: var(--primary-color);
-  border-radius: 30px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-.achievement-detail-date {
-  color: #888;
-  font-size: 0.875rem;
-}
-
-.student-profile {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.student-avatar-lg {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(var(--primary-rgb), 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-  color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.section-title {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #888;
-  margin-bottom: 0.5rem;
-}
-
-.section-content {
-  background: rgba(var(--primary-rgb), 0.03);
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-}
-
 /* 证书展示 */
 .certificate-modal .modal-body {
   padding: 0;
@@ -350,14 +303,172 @@
   color: var(--primary-color);
 }
 
+/* 成就展示页面证书显示样式 */
+.achievement-card.certificate-style {
+  position: relative;
+  background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.achievement-card.certificate-style:hover {
+  transform: translateY(-5px) rotateY(5deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.certificate-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid transparent;
+  border-image: linear-gradient(45deg, #462d80, #462d80, #462d80);
+  border-image-slice: 1;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.certificate-seal {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.certificate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.certificate-ribbon {
+  position: relative;
+  transform: translateX(-15px);
+}
+
+.badge-certificate {
+  background: linear-gradient(45deg, #4e54c8, #8f94fb);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 0 20px 20px 0;
+  font-weight: 600;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.badge-certificate:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 5px;
+  height: 5px;
+  background: #3a3f99;
+  border-radius: 0 0 0 5px;
+}
+
+.certificate-date {
+  color: #888;
+  font-style: italic;
+}
+
+.certificate-title-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  position: relative;
+}
+
+.certificate-title-container:before,
+.certificate-title-container:after {
+  content: '✦';
+  color: #5c1199;
+  position: absolute;
+  font-size: 14px;
+}
+
+.certificate-title-container:before {
+  left: 0;
+  top: 0;
+}
+
+.certificate-title-container:after {
+  right: 0;
+  bottom: 0;
+}
+
+.certificate-title {
+  font-family: 'Times New Roman', serif;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  background: linear-gradient(45deg, #333, #666);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.certificate-student {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.student-medal {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #9db8eb, #7c728d);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.student-medal i {
+  color: white;
+  font-size: 20px;
+}
+
+.student-name {
+  font-weight: 600;
+  color: #555;
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.student-name:after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(78, 84, 200, 0.5), transparent);
+}
+
 /* 响应式调整 */
 @media (max-width: 992px) {
   .achievement-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .achievement-header p {
     max-width: 100%;
+    font-size: 0.95rem;
   }
 
   .filter-panel {
@@ -365,15 +476,68 @@
     top: 0;
     margin-bottom: 1.5rem;
   }
+
+  .achievement-card {
+    margin-bottom: 1.25rem;
+  }
+
+  .certificate-title {
+    font-size: 1.1rem;
+  }
 }
 
 @media (max-width: 768px) {
   .achievement-header {
     padding: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .achievement-header h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .achievement-card .card-body {
+    padding: 1.25rem;
+  }
+
+  .student-name {
+    font-size: 0.95rem;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .achievement-header {
+    padding: 1.25rem;
+  }
+
+  .achievement-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .achievement-header p {
+    font-size: 0.85rem;
+  }
+
+  .view-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .certificate-student {
+    margin: 10px 0;
+  }
+
+  .student-medal {
+    width: 35px;
+    height: 35px;
   }
 }
 
@@ -404,4 +568,120 @@
   100% {
     opacity: 1;
   }
+}
+
+/* 以下是模态框中用到的类，需要保留 */
+.student-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.achievement-detail-badge {
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary-color);
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.achievement-detail-date {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.student-avatar-lg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.section-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.section-content {
+  background: rgba(var(--primary-rgb), 0.03);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 特殊效果样式 - 在achievements.php中使用 */
+.glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-color), #8e54e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 300% 300%;
+  animation: gradient-shift 10s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to bottom right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.1) 60%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -200%;
+  }
+
+  100% {
+    left: 200%;
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }

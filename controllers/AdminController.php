@@ -769,9 +769,9 @@ class AdminController {
         $title = isset($_POST['title']) ? sanitize_input($_POST['title']) : '';
         $description = isset($_POST['description']) ? sanitize_input($_POST['description']) : '';
         $achievement_type = isset($_POST['achievement_type']) ? sanitize_input($_POST['achievement_type']) : '';
-        $score = isset($_POST['score']) ? sanitize_input($_POST['score']) : '';
-        $certificate_no = isset($_POST['certificate_no']) ? sanitize_input($_POST['certificate_no']) : '';
-        $issue_authority = isset($_POST['issue_authority']) ? sanitize_input($_POST['issue_authority']) : '';
+        $score = isset($_POST['score']) && !empty($_POST['score']) ? sanitize_input($_POST['score']) : null;
+        $certificate_no = isset($_POST['certificate_no']) && !empty($_POST['certificate_no']) ? sanitize_input($_POST['certificate_no']) : null;
+        $issue_authority = isset($_POST['issue_authority']) && !empty($_POST['issue_authority']) ? sanitize_input($_POST['issue_authority']) : null;
         $achieved_date = isset($_POST['achieved_date']) ? sanitize_input($_POST['achieved_date']) : '';
         
         // 验证必填字段
@@ -1667,7 +1667,6 @@ class AdminController {
             redirect(site_url('admin/students'));
             return;
         }
-
         // 检查学生是否存在
         $sql = "SELECT * FROM " . TABLE_PREFIX . "students WHERE id = :id";
         $student = $this->db->query($sql, ['id' => $id]);
@@ -1677,7 +1676,24 @@ class AdminController {
             redirect(site_url('admin/students'));
             return;
         }
+
+        // 删除学生成就的附件
+        $sql = "SELECT attachment FROM " . TABLE_PREFIX . "achievements WHERE student_id = :student_id AND attachment IS NOT NULL";
+        $achievements = $this->db->queryAll($sql, ['student_id' => $id]);
         
+        // 遍历并删除每个附件文件
+        foreach ($achievements as $achievement) {
+            if (!empty($achievement['attachment'])) {
+                $file_path = UPLOAD_PATH . '/' . $achievement['attachment'];
+                if (file_exists($file_path)) {
+                    @unlink($file_path);
+                    error_log("删除附件文件: " . $file_path);
+                } else {
+                    error_log("附件文件不存在: " . $file_path);
+                }
+            }
+        }
+            
         // 查询与此学生关联的用户ID
         $sql = "SELECT user_id FROM " . TABLE_PREFIX . "students WHERE id = :id";
         $result = $this->db->query($sql, ['id' => $id]);
@@ -1714,6 +1730,7 @@ class AdminController {
             
             $_SESSION['error_message'] = '删除学生失败，请重试。';
         }
+        
         
         // 重定向回学生列表
         redirect(site_url('admin/students'));

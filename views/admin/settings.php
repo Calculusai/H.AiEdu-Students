@@ -78,29 +78,6 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     <textarea class="form-control custom-select" id="site_description" name="site_description" rows="2"><?php echo htmlspecialchars($settings['general']['site_description'] ?? '记录和展示少儿编程学习成就'); ?></textarea>
                                 </div>
                                 
-                                <div class="mb-4">
-                                    <label for="admin_email" class="form-label">管理员邮箱</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-transparent border-end-0">
-                                            <i class="bi bi-envelope"></i>
-                                        </span>
-                                        <input type="email" class="form-control custom-select border-start-0" id="admin_email" name="admin_email" value="<?php echo htmlspecialchars($settings['general']['admin_email'] ?? ''); ?>">
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-4">
-                                    <label for="items_per_page" class="form-label">每页显示数量</label>
-                                    <select class="form-select custom-select" id="items_per_page" name="items_per_page">
-                                        <?php 
-                                        $current_per_page = $settings['general']['items_per_page'] ?? 10;
-                                        $options = [5, 10, 15, 20, 25, 30, 50, 100];
-                                        foreach ($options as $option) {
-                                            echo '<option value="' . $option . '" ' . ($current_per_page == $option ? 'selected' : '') . '>' . $option . '</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                
                                 <div class="mt-4">
                                     <button type="submit" class="btn btn-primary btn-shine">
                                         <i class="bi bi-save me-2"></i>保存设置
@@ -125,11 +102,6 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     </div>
                                 </div>
                                 
-                                <div class="mb-4">
-                                    <label for="achievement_types" class="form-label">预设成就类型（多个类型用逗号分隔）</label>
-                                    <textarea class="form-control custom-select" id="achievement_types" name="achievement_types" rows="3"><?php echo htmlspecialchars($settings['content']['achievement_types'] ?? '编程考试成绩,编程证书,竞赛获奖'); ?></textarea>
-                                    <div class="form-text">这些类型将作为成就添加页面的默认选项</div>
-                                </div>
                                 
                                 <div class="mb-4">
                                     <label for="footer_text" class="form-label">页脚信息</label>
@@ -225,46 +197,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                         <label class="form-check-label" for="allow_registration">允许前台注册（不建议开启）</label>
                                     </div>
                                 </div>
-                                
-                                <div class="mb-4">
-                                    <label for="login_attempts" class="form-label">最大登录尝试次数</label>
-                                    <select class="form-select custom-select" id="login_attempts" name="login_attempts">
-                                        <?php 
-                                        $current_attempts = $settings['security']['login_attempts'] ?? 5;
-                                        $options = [3, 5, 10, 15, 20];
-                                        foreach ($options as $option) {
-                                            echo '<option value="' . $option . '" ' . ($current_attempts == $option ? 'selected' : '') . '>' . $option . ' 次</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-4">
-                                    <label for="password_policy" class="form-label">密码策略</label>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="require_uppercase" name="password_policy[require_uppercase]" value="1" <?php echo ($settings['security']['password_policy']['require_uppercase'] ?? 1) ? 'checked' : ''; ?>>
-                                        <label class="form-check-label" for="require_uppercase">要求包含大写字母</label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="require_number" name="password_policy[require_number]" value="1" <?php echo ($settings['security']['password_policy']['require_number'] ?? 1) ? 'checked' : ''; ?>>
-                                        <label class="form-check-label" for="require_number">要求包含数字</label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="require_special" name="password_policy[require_special]" value="1" <?php echo ($settings['security']['password_policy']['require_special'] ?? 0) ? 'checked' : ''; ?>>
-                                        <label class="form-check-label" for="require_special">要求包含特殊字符</label>
-                                    </div>
-                                    
-                                    <div class="mt-3">
-                                        <label for="min_password_length" class="form-label">最小密码长度</label>
-                                        <input type="range" class="form-range" id="min_password_length" name="password_policy[min_length]" min="6" max="16" step="1" value="<?php echo ($settings['security']['password_policy']['min_length'] ?? 8); ?>">
-                                        <div class="d-flex justify-content-between">
-                                            <span>6</span>
-                                            <span id="password_length_value"><?php echo ($settings['security']['password_policy']['min_length'] ?? 8); ?></span>
-                                            <span>16</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
+                                                              
                                 <div class="mt-4">
                                     <button type="submit" class="btn btn-primary btn-shine">
                                         <i class="bi bi-save me-2"></i>保存设置

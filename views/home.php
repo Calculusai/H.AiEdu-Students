@@ -35,7 +35,7 @@ include_once VIEW_PATH . '/header.php';
         if (SYSTEM_INSTALLED) {
             $sql = "SELECT a.*, s.name as student_name FROM " . TABLE_PREFIX . "achievements a 
                     JOIN " . TABLE_PREFIX . "students s ON a.student_id = s.id
-                    ORDER BY a.created_at DESC LIMIT 6";
+                    ORDER BY a.created_at DESC LIMIT 4";
             $achievements = $db->queryAll($sql);
         }
         ?>

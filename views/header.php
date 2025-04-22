@@ -15,7 +15,6 @@
     
     <!-- 导航栏样式 -->
     <link rel="stylesheet" href="<?php echo asset_url('css/navbar.css'); ?>">
-    
     <!-- Bootstrap图标 -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     
@@ -35,6 +34,14 @@
     
     <?php if (isset($extra_css)): ?>
     <!-- 额外CSS -->
+    <!-- 阿里妈妈方圆体 -->
+    <link rel="stylesheet" href="//at.alicdn.com/t/webfont_c9tvm3u3fv.css">
+    <style>
+        body {
+            font-family: 'AlimamaShuHeiTi',  sans-serif;
+        }
+    </style>
+     
     <?php echo $extra_css; ?>
     <?php endif; ?>
 </head>
