@@ -1279,6 +1279,9 @@ class AdminController {
                 LIMIT 10";
         $stats['top_students'] = $this->db->queryAll($sql);
         
+        // 计算最大成就数，用于进度条显示
+        $stats['max_achievements'] = !empty($stats['top_students']) ? $stats['top_students'][0]['achievement_count'] : 0;
+        
         // 获取最新的10条成就记录
         $sql = "SELECT a.*, s.name as student_name 
                 FROM " . TABLE_PREFIX . "achievements a 

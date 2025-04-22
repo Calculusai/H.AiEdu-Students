@@ -25,6 +25,8 @@
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Icon -->
+    <link rel="icon" href="<?php echo asset_url('images/Students.png'); ?>">
     <!-- 主脚本 -->
     <script src="<?php echo asset_url('js/main.js'); ?>" defer></script>
     

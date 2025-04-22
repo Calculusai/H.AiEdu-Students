@@ -192,7 +192,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                             <div class="progress flex-grow-1" style="height: 8px; width: 100px;">
                                                 <div class="progress-bar bg-primary" role="progressbar" style="width: <?php echo min(100, ($student['achievement_count'] / max(1, $stats['max_achievements'])) * 100); ?>%" aria-valuenow="<?php echo $student['achievement_count']; ?>" aria-valuemin="0" aria-valuemax="<?php echo $stats['max_achievements']; ?>"></div>
                                             </div>
-                                            <span class="ms-2"><?php echo $student['achievement_count']; ?></span>
+                                            <span class="ms-2 fw-medium"><?php echo $student['achievement_count']; ?></span>
                                         </div>
                                     </td>
                                     <td>
