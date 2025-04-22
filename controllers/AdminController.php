@@ -490,16 +490,26 @@ class AdminController {
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         
-        // 获取搜索条件
+        // 获取搜索条件 - 用于安全显示
         $search = isset($_GET['search']) ? sanitize_input($_GET['search']) : '';
-        
-        // 获取筛选条件
         $filter_class = isset($_GET['class']) ? sanitize_input($_GET['class']) : '';
         $filter_grade = isset($_GET['grade']) ? sanitize_input($_GET['grade']) : '';
         $filter_status = isset($_GET['status']) !== false ? sanitize_input($_GET['status']) : '';
         
+        // 初始化提示消息
+        $search_message = '';
+        
+        // 对搜索输入进行处理 - 用于数据库查询
+        $search_raw = isset($_GET['search']) ? trim(urldecode($_GET['search'])) : '';
+        $filter_class_raw = isset($_GET['class']) ? trim(urldecode($_GET['class'])) : '';
+        $filter_grade_raw = isset($_GET['grade']) ? trim(urldecode($_GET['grade'])) : '';
+        
+        // 记录搜索条件 - 用于调试
+        error_log("原始搜索词: " . (isset($_GET['search']) ? $_GET['search'] : '空'));
+        error_log("解码后搜索词: " . $search_raw);
+        
         // 构建查询
-        $sql = "SELECT s.*, u.username, u.last_login, u.status, COUNT(a.id) as achievement_count 
+        $sql = "SELECT s.*, u.username, u.email, u.last_login, u.status, COUNT(DISTINCT a.id) as achievement_count 
                 FROM " . TABLE_PREFIX . "students s
                 LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id
                 LEFT JOIN " . TABLE_PREFIX . "achievements a ON s.id = a.student_id";
@@ -508,49 +518,65 @@ class AdminController {
         $whereConditions = [];
         
         // 添加搜索条件
-        if (!empty($search)) {
-            $whereConditions[] = "(s.name LIKE :search OR s.student_id LIKE :search OR s.class_name LIKE :search)";
-            $params['search'] = "%{$search}%";
+        if (!empty($search_raw)) {
+            $whereConditions[] = "(s.name LIKE ? OR s.student_id LIKE ? OR s.class_name LIKE ?)";
+            $params[] = "%{$search_raw}%";
+            $params[] = "%{$search_raw}%";
+            $params[] = "%{$search_raw}%";
+            $search_message = "搜索：\"" . htmlspecialchars($search) . "\"";
         }
         
         // 添加班级筛选
-        if (!empty($filter_class)) {
-            $whereConditions[] = "s.class_name = :class";
-            $params['class'] = $filter_class;
+        if (!empty($filter_class_raw)) {
+            $whereConditions[] = "s.class_name = ?";
+            $params[] = $filter_class_raw;
+            $search_message .= (!empty($search_message) ? "，" : "") . "班级：" . htmlspecialchars($filter_class);
         }
         
         // 添加年级筛选
-        if (!empty($filter_grade)) {
-            $whereConditions[] = "s.grade = :grade";
-            $params['grade'] = $filter_grade;
+        if (!empty($filter_grade_raw)) {
+            $whereConditions[] = "s.grade = ?";
+            $params[] = $filter_grade_raw;
+            $search_message .= (!empty($search_message) ? "，" : "") . "年级：" . htmlspecialchars($filter_grade);
         }
         
         // 添加账号状态筛选
         if ($filter_status !== '') {
-            $whereConditions[] = "u.status = :status";
-            $params['status'] = (int)$filter_status;
+            $whereConditions[] = "u.status = ?";
+            $params[] = (int)$filter_status;
+            $search_message .= (!empty($search_message) ? "，" : "") . "状态：" . ((int)$filter_status == 1 ? "启用" : "禁用");
         }
         
-        // 组合WHERE子句
+        // 构建WHERE子句部分
+        $whereClause = '';
         if (!empty($whereConditions)) {
-            $sql .= " WHERE " . implode(' AND ', $whereConditions);
+            $whereClause = " WHERE " . implode(' AND ', $whereConditions);
         }
-        
-        // 添加分组
-        $sql .= " GROUP BY s.id";
-        
-        // 添加排序
-        $sql .= " ORDER BY s.name";
         
         // 获取总记录数
-        $countSql = "SELECT COUNT(*) as total FROM " . TABLE_PREFIX . "students s";
-        if (!empty($whereConditions)) {
-            // 连接用户表，因为需要用到status筛选
-            $countSql .= " LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id";
-            $countSql .= " WHERE " . implode(' AND ', $whereConditions);
+        $countSql = "SELECT COUNT(*) as total FROM (
+                    SELECT DISTINCT s.id 
+                    FROM " . TABLE_PREFIX . "students s
+                    LEFT JOIN " . TABLE_PREFIX . "users u ON s.user_id = u.id"
+                    . $whereClause . ") as subquery";
+        
+        // 记录计数SQL查询
+        error_log("学生计数SQL查询: " . $countSql);
+        error_log("参数数量: " . count($params));
+        
+        try {
+            $totalResult = $this->db->query($countSql, $params);
+            $total = $totalResult ? $totalResult['total'] : 0;
+        } catch (Exception $e) {
+            error_log("计数查询错误: " . $e->getMessage());
+            $total = 0;
         }
-        $totalResult = $this->db->query($countSql, $params);
-        $total = $totalResult ? $totalResult['total'] : 0;
+        
+        // 添加主查询的WHERE子句
+        $sql .= $whereClause;
+        
+        // 添加分组和排序
+        $sql .= " GROUP BY s.id ORDER BY s.name";
         
         // 计算总页数
         $totalPages = ceil($total / $this->itemsPerPage);
@@ -560,8 +586,24 @@ class AdminController {
         $offset = ($page - 1) * $this->itemsPerPage;
         $sql .= " LIMIT {$offset}, {$this->itemsPerPage}";
         
+        // 记录主SQL查询
+        error_log("学生列表SQL查询: " . $sql);
+        
         // 执行查询
-        $students = $this->db->queryAll($sql, $params);
+        try {
+            $students = $this->db->queryAll($sql, $params);
+            error_log("获取到的学生数量: " . count($students));
+        } catch (Exception $e) {
+            error_log("列表查询错误: " . $e->getMessage());
+            $students = [];
+        }
+        
+        // 设置搜索条件的提示消息
+        if (!empty($search_message)) {
+            $_SESSION['search_message'] = $search_message;
+        } else if (isset($_SESSION['search_message'])) {
+            unset($_SESSION['search_message']);
+        }
         
         // 获取班级列表（用于筛选表单）
         $sql = "SELECT DISTINCT class_name FROM " . TABLE_PREFIX . "students WHERE class_name IS NOT NULL AND class_name != '' ORDER BY class_name";
@@ -601,10 +643,14 @@ class AdminController {
         // 获取当前页码
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         
-        // 获取筛选条件
+        // 获取筛选条件 - 用于安全显示
         $type = isset($_GET['type']) ? sanitize_input($_GET['type']) : '';
         $search = isset($_GET['search']) ? sanitize_input($_GET['search']) : '';
         $student_id = isset($_GET['student_id']) ? (int)$_GET['student_id'] : 0;
+        
+        // 对搜索输入进行处理 - 用于数据库查询
+        $search_raw = isset($_GET['search']) ? trim(urldecode($_GET['search'])) : '';
+        $type_raw = isset($_GET['type']) ? trim(urldecode($_GET['type'])) : '';
         
         // 获取成就类型列表
         $types = $this->getAchievementTypes();
@@ -621,44 +667,63 @@ class AdminController {
         $whereConditions = [];
         
         // 添加筛选条件
-        if (!empty($type)) {
-            $whereConditions[] = "a.achievement_type = :type";
-            $params['type'] = $type;
+        if (!empty($type_raw)) {
+            $whereConditions[] = "a.achievement_type = ?";
+            $params[] = $type_raw;
         }
         
-        if (!empty($search)) {
-            $whereConditions[] = "(a.title LIKE :search OR a.description LIKE :search OR s.name LIKE :search)";
-            $params['search'] = "%{$search}%";
+        if (!empty($search_raw)) {
+            $whereConditions[] = "(a.title LIKE ? OR a.description LIKE ? OR s.name LIKE ?)";
+            $params[] = "%{$search_raw}%";
+            $params[] = "%{$search_raw}%";
+            $params[] = "%{$search_raw}%";
         }
         
         if ($student_id > 0) {
-            $whereConditions[] = "a.student_id = :student_id";
-            $params['student_id'] = $student_id;
+            $whereConditions[] = "a.student_id = ?";
+            $params[] = $student_id;
         }
         
         // 组合WHERE子句
+        $whereClause = '';
         if (!empty($whereConditions)) {
-            $sql .= " WHERE " . implode(' AND ', $whereConditions);
+            $whereClause = " WHERE " . implode(' AND ', $whereConditions);
         }
         
         // 添加排序
-        $sql .= " ORDER BY a.achieved_date DESC";
+        $orderClause = " ORDER BY a.achieved_date DESC";
         
         // 获取总记录数
-        $countSql = str_replace("a.*, s.name as student_name", "COUNT(*) as total", $sql);
-        $totalResult = $this->db->query($countSql, $params);
-        $total = $totalResult ? $totalResult['total'] : 0;
+        $countSql = "SELECT COUNT(*) as total FROM " . TABLE_PREFIX . "achievements a 
+                    JOIN " . TABLE_PREFIX . "students s ON a.student_id = s.id" 
+                    . $whereClause;
+        
+        try {
+            $totalResult = $this->db->query($countSql, $params);
+            $total = $totalResult ? $totalResult['total'] : 0;
+        } catch (Exception $e) {
+            error_log("成就计数查询错误: " . $e->getMessage());
+            $total = 0;
+        }
         
         // 计算总页数
         $totalPages = ceil($total / $this->itemsPerPage);
         $page = min($page, max(1, $totalPages));
+        
+        // 添加完整SQL
+        $sql .= $whereClause . $orderClause;
         
         // 添加分页
         $offset = ($page - 1) * $this->itemsPerPage;
         $sql .= " LIMIT {$offset}, {$this->itemsPerPage}";
         
         // 执行查询
-        $achievements = $this->db->queryAll($sql, $params);
+        try {
+            $achievements = $this->db->queryAll($sql, $params);
+        } catch (Exception $e) {
+            error_log("成就列表查询错误: " . $e->getMessage());
+            $achievements = [];
+        }
         
         // 生成分页HTML
         $paginationURL = '?page=%d' . 

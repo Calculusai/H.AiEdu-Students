@@ -22,9 +22,9 @@ include_once VIEW_PATH . '/header.php';
                             <i class="bi bi-arrow-left me-2"></i>返回上一页
                         </a>
                         <a href="<?php echo site_url(); ?>" class="btn btn-gradient btn-lg btn-shine px-4 py-3 rounded-pill">
-                            <i class="bi bi-house-door me-2"></i>返回首页
-                        </a>
-                    </div>
+        <i class="bi bi-house-door me-2"></i>返回首页
+    </a>
+</div>
                 </div>
             </div>
         </div>

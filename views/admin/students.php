@@ -42,7 +42,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     <span class="input-group-text bg-transparent border-end-0">
                                         <i class="bi bi-search"></i>
                                     </span>
-                                    <input type="text" class="form-control custom-select border-start-0" placeholder="搜索学生姓名、学号或班级..." 
+                                    <input type="text" class="form-control custom-select border-start-0" placeholder="搜索学生姓名、学号或班级" 
                                            name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                                     <button class="btn btn-primary btn-shine" type="submit">搜索</button>
                                 </div>
@@ -73,6 +73,18 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                             </div>
                         </div>
                     </div>
+                    
+                    <?php if (isset($_SESSION['search_message']) && !empty($_SESSION['search_message'])): ?>
+                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            当前筛选条件: <?php echo $_SESSION['search_message']; ?>
+                        </div>
+                        <a href="<?php echo site_url('admin/students'); ?>" class="btn btn-sm btn-light">
+                            <i class="bi bi-x-lg me-1"></i>清除筛选
+                        </a>
+                    </div>
+                    <?php endif; ?>
                     
                     <?php if (isset($error_message)): ?>
                     <div class="alert alert-danger">
