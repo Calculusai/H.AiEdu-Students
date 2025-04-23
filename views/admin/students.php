@@ -1,6 +1,6 @@
 <?php
 /**
- * 管理员学生列表视图
+ * 管理员学生列表视图 - 现代多巴胺风格
  */
 include_once VIEW_PATH . '/header.php';
 
@@ -13,28 +13,34 @@ $breadcrumbs = [
 include_once VIEW_PATH . '/templates/breadcrumb.php';
 ?>
 
-<div class="container py-5">
+<div class="container py-4">
+    <!-- 头部信息卡片 -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card glass animate-float mb-4">
+            <div class="card glass animate-float">
                 <div class="card-body p-4">
-                    <h1 class="gradient-text mb-3 animate-pulse">学生管理</h1>
-                    <p class="lead">管理所有学生信息，添加、编辑或查看学生的成就记录。</p>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h1 class="gradient-text mb-2 animate-pulse">学生管理</h1>
+                            <p class="lead mb-0">管理所有学生信息，添加、编辑或查看学生的成就记录。</p>
+                        </div>
+                        <div class="mt-3 mt-md-0">
+                            <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-rounded btn-shine">
+                                <i class="bi bi-person-plus-fill me-2"></i>添加学生
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- 主要内容区 -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card glass">
-                <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 p-4">
-                    <h5 class="gradient-text mb-0">学生列表</h5>
-                    <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-shine">
-                        <i class="bi bi-person-plus-fill me-2"></i>添加学生
-                    </a>
-                </div>
                 <div class="card-body p-4">
+                    <!-- 搜索和操作区 -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-8">
                             <form class="d-flex" action="<?php echo site_url('admin/students'); ?>" method="get">
@@ -49,12 +55,12 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                             </form>
                         </div>
                         <div class="col-md-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <div class="d-flex justify-content-md-end gap-2">
+                                <button type="button" class="btn btn-outline-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#filterModal">
                                     <i class="bi bi-funnel-fill me-2"></i>筛选
                                 </button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-outline-primary btn-rounded dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         批量操作
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bulkActionsDropdown">
@@ -74,30 +80,34 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                         </div>
                     </div>
                     
+                    <!-- 筛选提示信息 -->
                     <?php if (isset($_SESSION['search_message']) && !empty($_SESSION['search_message'])): ?>
-                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4 rounded-4 border-0">
                         <div>
                             <i class="bi bi-info-circle-fill me-2"></i>
                             当前筛选条件: <?php echo $_SESSION['search_message']; ?>
                         </div>
-                        <a href="<?php echo site_url('admin/students'); ?>" class="btn btn-sm btn-light">
+                        <a href="<?php echo site_url('admin/students'); ?>" class="btn btn-sm btn-light btn-rounded">
                             <i class="bi bi-x-lg me-1"></i>清除筛选
                         </a>
                     </div>
                     <?php endif; ?>
                     
+                    <!-- 错误信息 -->
                     <?php if (isset($error_message)): ?>
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger rounded-4 border-0">
                         <?php echo $error_message; ?>
                     </div>
                     <?php endif; ?>
                     
+                    <!-- 成功信息 -->
                     <?php if (isset($success_message)): ?>
-                    <div class="alert alert-success">
+                    <div class="alert alert-success rounded-4 border-0">
                         <?php echo $success_message; ?>
                     </div>
                     <?php endif; ?>
                     
+                    <!-- 数据表单 -->
                     <form id="studentsForm" action="<?php echo site_url('admin/students/bulk_action'); ?>" method="post">
                         <div class="table-responsive">
                             <table class="table table-borderless table-hover align-middle">
@@ -122,18 +132,18 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     <?php if (empty($students)): ?>
                                     <tr>
                                         <td colspan="9" class="text-center py-5">
-                                            <div class="badge-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:60px;height:60px">
+                                            <div class="badge-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 animate-pulse" style="width:72px;height:72px">
                                                 <i class="bi bi-people fs-1"></i>
                                             </div>
                                             <h5 class="text-muted mb-3">暂无学生数据</h5>
-                                            <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-shine">
+                                            <a href="<?php echo site_url('admin/students/add'); ?>" class="btn btn-primary btn-rounded btn-shine">
                                                 <i class="bi bi-person-plus-fill me-2"></i>添加学生
                                             </a>
                                         </td>
                                     </tr>
                                     <?php else: ?>
                                         <?php foreach ($students as $student): ?>
-                                        <tr>
+                                        <tr class="student-row hover-scale-sm">
                                             <td>
                                                 <div class="form-check">
                                                     <input class="form-check-input student-checkbox" type="checkbox" name="selected_students[]" value="<?php echo $student['id']; ?>">
@@ -160,13 +170,13 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a href="<?php echo site_url('admin/students/edit/' . $student['id']); ?>" class="btn btn-sm btn-primary btn-shine" data-bs-toggle="tooltip" title="编辑">
+                                                    <a href="<?php echo site_url('admin/students/edit/' . $student['id']); ?>" class="btn btn-sm btn-primary btn-rounded btn-shine" data-bs-toggle="tooltip" title="编辑">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="<?php echo site_url('admin/students/achievements/' . $student['id']); ?>" class="btn btn-sm btn-info btn-shine" data-bs-toggle="tooltip" title="成就管理">
+                                                    <a href="<?php echo site_url('admin/students/achievements/' . $student['id']); ?>" class="btn btn-sm btn-info btn-rounded btn-shine" data-bs-toggle="tooltip" title="成就管理">
                                                         <i class="bi bi-trophy"></i>
                                                     </a>
-                                                    <button type="button" class="btn btn-sm btn-danger btn-shine delete-btn" data-id="<?php echo $student['id']; ?>" data-name="<?php echo htmlspecialchars($student['name']); ?>" data-bs-toggle="tooltip" title="删除">
+                                                    <button type="button" class="btn btn-sm btn-danger btn-rounded btn-shine delete-btn" data-id="<?php echo $student['id']; ?>" data-name="<?php echo htmlspecialchars($student['name']); ?>" data-bs-toggle="tooltip" title="删除">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </div>
@@ -179,6 +189,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                         </div>
                     </form>
                     
+                    <!-- 分页区域 -->
                     <?php if (!empty($students)): ?>
                     <div class="row mt-4">
                         <div class="col-md-6">
@@ -247,8 +258,8 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary btn-shine">应用筛选</button>
+                    <button type="button" class="btn btn-outline-secondary btn-rounded" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary btn-rounded btn-shine">应用筛选</button>
                 </div>
             </form>
         </div>
@@ -265,16 +276,16 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
             </div>
             <div class="modal-body">
                 <div class="text-center mb-4">
-                    <div class="badge-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:60px;height:60px">
-                        <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                    <div class="badge-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 animate-pulse" style="width:72px;height:72px">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                     </div>
                 </div>
                 <p class="text-center">确定要删除学生 <strong id="studentName"></strong> 吗？</p>
                 <p class="text-center text-danger">此操作将同时删除该学生的所有成就记录且不可恢复！</p>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" id="confirmDeleteBtn" class="btn btn-danger btn-shine">确认删除</button>
+                <button type="button" class="btn btn-outline-secondary btn-rounded" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger btn-rounded btn-shine">确认删除</button>
             </div>
         </div>
     </div>
@@ -297,10 +308,10 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="importFile" class="form-label">选择Excel文件</label>
-                        <input type="file" class="form-control" id="importFile" name="import_file" accept=".xlsx,.xls,.csv" required>
+                        <input type="file" class="form-control custom-select" id="importFile" name="import_file" accept=".xlsx,.xls,.csv" required>
                         <div class="form-text">支持 Excel (.xlsx, .xls) 或 CSV 格式</div>
                     </div>
-                    <div class="alert alert-info">
+                    <div class="alert alert-info rounded-4 border-0">
                         <h6 class="alert-heading mb-2"><i class="bi bi-info-circle me-2"></i>导入说明</h6>
                         <p class="mb-2">请确保Excel文件包含以下列：</p>
                         <ul class="mb-0">
@@ -312,8 +323,8 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary btn-shine">导入</button>
+                    <button type="button" class="btn btn-outline-secondary btn-rounded" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary btn-rounded btn-shine">导入</button>
                 </div>
                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
             </form>
@@ -321,8 +332,21 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
     </div>
 </div>
 
+<!-- 添加一些用于增强动画效果的JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // 为行添加进入动画
+    const studentRows = document.querySelectorAll('.student-row');
+    studentRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            row.style.transition = 'all 0.3s ease-out';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 50 + (index * 30));
+    });
+
     // 删除确认
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function() {
@@ -406,5 +430,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<style>
+/* 行悬停微缩放效果 */
+.hover-scale-sm {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.hover-scale-sm:hover {
+    transform: scale(1.01);
+    background-color: rgba(99, 102, 241, 0.03);
+}
+</style>
 
 <?php include_once VIEW_PATH . '/footer.php'; ?> 

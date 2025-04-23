@@ -172,7 +172,9 @@ $total_pages = ceil($total_records / $per_page);
                                     <div class="student-medal">
                                         <i class="bi bi-person-badge"></i>
                                     </div>
-                                    <span class="student-name"><?php echo htmlspecialchars($achievement['student_name']); ?></span>
+                                    <a href="<?php echo site_url('student/' . $achievement['student_id']); ?>" class="student-name">
+                                        <?php echo htmlspecialchars($achievement['student_name']); ?>
+                                    </a>
                                 </div>
                                 
                                 <style>
@@ -214,7 +216,9 @@ $total_pages = ceil($total_records / $per_page);
                                                 <div class="student-medal me-3">
                                                     <i class="bi bi-person-fill"></i>
                                                 </div>
-                                                <div class="student-name"><?php echo htmlspecialchars($achievement['student_name']); ?></div>
+                                                <a href="<?php echo site_url('student/' . $achievement['student_id']); ?>" class="student-name">
+                                                    <?php echo htmlspecialchars($achievement['student_name']); ?>
+                                                </a>
                                             </div>
                                         </div>
                                         

@@ -27,7 +27,7 @@ define('SYSTEM_INSTALLED', true);
 // 主题设置
 define('DEFAULT_THEME', 'light'); // 默认主题（light/dark）
 define('ALLOW_USER_THEME', true); // 允许用户自定义主题
-define('PRIMARY_COLOR', '#1e65c2'); // 主色调 - 从settings中获取
+define('PRIMARY_COLOR', '#2a48c0'); // 主色调 - 从settings中获取
 define('SECONDARY_COLOR', '#690fc2'); // 次要色调 - 从settings中获取
 define('THEME_COLORS', [
     'primary' => PRIMARY_COLOR, // 使用定义的变量
