@@ -377,4 +377,45 @@ function upload_file($file, $dirPath = '', $allowedTypes = []) {
     }
     
     return false;
+}
+
+/**
+ * 获取系统设置
+ * 
+ * @param string $key 设置键名
+ * @param string $default 默认值
+ * @return string 设置值
+ */
+function get_setting($key, $default = '') {
+    static $settings = null;
+    
+    // 如果设置未初始化，从数据库加载所有设置并缓存
+    if ($settings === null) {
+        $settings = [];
+        
+        // 检查系统是否已安装
+        if (defined('SYSTEM_INSTALLED') && SYSTEM_INSTALLED) {
+            // 引入Setting模型
+            require_once MODEL_PATH . '/Setting.php';
+            $settingModel = new Setting();
+            
+            // 获取所有设置并按键名组织
+            $allSettings = $settingModel->getAllSettings();
+            
+            // 将分组设置扁平化为单层键值对
+            foreach ($allSettings as $group => $groupSettings) {
+                foreach ($groupSettings as $settingKey => $settingValue) {
+                    $settings[$settingKey] = $settingValue;
+                }
+            }
+        }
+    }
+    
+    // 页脚文本特殊处理：如果footer_text为空或不存在，使用默认值
+    if ($key === 'footer_text' && (!isset($settings[$key]) || empty($settings[$key]))) {
+        return $default;
+    }
+    
+    // 从缓存中返回设置，如果不存在则返回默认值
+    return isset($settings[$key]) ? $settings[$key] : $default;
 } 

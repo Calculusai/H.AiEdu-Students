@@ -7,9 +7,9 @@
 .achievement-header {
   position: relative;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: var(--card-border-radius, 16px);
   padding: 2.5rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #8e54e9 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color, #8e54e9) 100%);
   margin-bottom: 2rem;
   animation: float 6s ease-in-out infinite;
   transform-origin: center center;
@@ -61,9 +61,9 @@
 .filter-panel {
   background-color: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 1px solid rgba(var(--primary-rgb), 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius, 16px);
+  border: 1px solid rgba(var(--primary-rgb, 99, 102, 241), 0.1);
+  box-shadow: var(--box-shadow, 0 10px 30px rgba(0, 0, 0, 0.05));
   padding: 1.5rem;
   margin-bottom: 2rem;
   position: sticky;
@@ -77,32 +77,32 @@
 }
 
 .filter-panel .form-select {
-  border-radius: 12px;
+  border-radius: var(--button-border-radius, 12px);
   padding: 0.6rem 1rem;
-  border: 1px solid rgba(var(--primary-rgb), 0.1);
+  border: 1px solid rgba(var(--primary-rgb, 99, 102, 241), 0.1);
   transition: all 0.3s ease;
 }
 
 .filter-panel .form-select:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.1);
+  box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb, 99, 102, 241), 0.1);
 }
 
 /* 应用筛选按钮 */
 .filter-btn {
-  border-radius: 12px;
+  border-radius: var(--button-border-radius, 12px);
   padding: 0.7rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #8e54e9 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color, #8e54e9) 100%);
   border: none;
   color: white;
-  box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.2);
+  box-shadow: 0 4px 15px rgba(var(--primary-rgb, 99, 102, 241), 0.2);
 }
 
 .filter-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.3);
+  box-shadow: 0 8px 25px rgba(var(--primary-rgb, 99, 102, 241), 0.3);
 }
 
 .filter-btn i {
@@ -111,10 +111,10 @@
 
 /* 成就卡片样式 */
 .achievement-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--card-bg, white);
+  border-radius: var(--card-border-radius, 16px);
   border: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--box-shadow, 0 10px 30px rgba(0, 0, 0, 0.05));
   transition: all 0.3s ease;
   height: 100%;
   overflow: hidden;
@@ -122,7 +122,7 @@
 
 .achievement-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(var(--primary-rgb), 0.1);
+  box-shadow: var(--box-shadow-lg, 0 15px 35px rgba(var(--primary-rgb, 99, 102, 241), 0.1));
 }
 
 .achievement-card .card-body {
@@ -130,7 +130,7 @@
 }
 
 .achievement-card .badge {
-  background: rgba(var(--primary-rgb), 0.1);
+  background: rgba(var(--primary-rgb, 99, 102, 241), 0.1);
   color: var(--primary-color);
   border-radius: 30px;
   padding: 0.5rem 1rem;
@@ -620,12 +620,13 @@
 }
 
 /* 特殊效果样式 - 在achievements.php中使用 */
-.glass {
+/*.glass {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
 }
+*/
 
 .gradient-text {
   background: linear-gradient(135deg, var(--primary-color), #8e54e9);

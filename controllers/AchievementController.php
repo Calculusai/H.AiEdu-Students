@@ -247,10 +247,8 @@ class AchievementController {
             return null;
         }
         
-        $sql = "SELECT setting_value FROM " . TABLE_PREFIX . "settings WHERE setting_key = :key";
-        $result = $this->db->query($sql, ['key' => $key]);
-        
-        return $result ? $result['setting_value'] : null;
+        // 使用全局辅助函数获取设置
+        return get_setting($key);
     }
     
     /**

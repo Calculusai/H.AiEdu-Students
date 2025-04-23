@@ -14,19 +14,19 @@
 }
 
 .bg-primary-soft {
-    background-color: rgba(var(--primary-rgb), 0.1);
+    background-color: rgba(var(--primary-rgb, 99, 102, 241), 0.1);
 }
 
 .bg-success-soft {
-    background-color: rgba(25, 135, 84, 0.1);
+    background-color: rgba(var(--success-rgb, 25, 135, 84), 0.1);
 }
 
 .bg-warning-soft {
-    background-color: rgba(255, 193, 7, 0.1);
+    background-color: rgba(var(--warning-rgb, 255, 193, 7), 0.1);
 }
 
 .bg-info-soft {
-    background-color: rgba(13, 202, 240, 0.1);
+    background-color: rgba(var(--info-rgb, 13, 202, 240), 0.1);
 }
 
 .bg-light-opacity {
@@ -34,7 +34,7 @@
 }
 
 .gradient-text {
-    background: linear-gradient(45deg, var(--primary-color), #6f42c1);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color, #6f42c1));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -42,7 +42,7 @@
 }
 
 .btn-gradient {
-    background: linear-gradient(45deg, var(--primary-color), #6f42c1);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color, #6f42c1));
     border: none;
     color: white;
 }
@@ -70,14 +70,14 @@
     display: flex;
     align-items: center;
     padding: 12px;
-    border-radius: 12px;
+    border-radius: var(--border-radius, 12px);
     background-color: rgba(255, 255, 255, 0.5);
     transition: all 0.3s ease;
 }
 
 .achievement-item:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--box-shadow-sm, 0 4px 15px rgba(0, 0, 0, 0.05));
 }
 
 .achievement-icon {
@@ -88,7 +88,7 @@
     align-items: center;
     justify-content: center;
     margin-right: 10px;
-    background: linear-gradient(45deg, var(--primary-color), #6f42c1);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color, #6f42c1));
     color: white;
 }
 
@@ -109,7 +109,7 @@
     top: 5px;
     bottom: 5px;
     width: 2px;
-    background: linear-gradient(to bottom, var(--primary-color), rgba(var(--primary-rgb), 0.1));
+    background: linear-gradient(to bottom, var(--primary-color), rgba(var(--primary-rgb, 99, 102, 241), 0.1));
 }
 
 .timeline-item {
@@ -123,7 +123,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: linear-gradient(45deg, var(--primary-color), #6f42c1);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color, #6f42c1));
     top: 6px;
 }
 
@@ -133,21 +133,21 @@
 
 /* 多巴胺风格样式 */
 .bg-gradient-primary-to-secondary {
-    background: linear-gradient(135deg, #4776E6 0%, #8E54E9 100%);
+    background: linear-gradient(135deg, var(--primary-color, #4776E6) 0%, var(--secondary-color, #8E54E9) 100%);
 }
 
 .info-card {
     display: flex;
-    background-color: #fff;
-    border-radius: 12px;
+    background-color: var(--card-bg, #fff);
+    border-radius: var(--border-radius, 12px);
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: var(--box-shadow-sm, 0 4px 12px rgba(0, 0, 0, 0.03));
     transition: all 0.3s ease;
 }
 
 .info-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    box-shadow: var(--box-shadow, 0 6px 16px rgba(0, 0, 0, 0.06));
 }
 
 .info-card-icon {
@@ -200,7 +200,7 @@
     background-color: #fff;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .account-status-label {
@@ -256,13 +256,13 @@
     border-radius: 12px;
     overflow: hidden;
     padding: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     transition: all 0.3s ease;
 }
 
 .time-box:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 .time-icon {
@@ -298,9 +298,11 @@
     0% {
         box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.4);
     }
+
     70% {
         box-shadow: 0 0 0 6px rgba(25, 135, 84, 0);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(25, 135, 84, 0);
     }
@@ -319,9 +321,9 @@
         height: 50px;
         font-size: 1.2rem;
     }
-    
+
     .time-icon {
         width: 35px;
         height: 35px;
     }
-} 
+}

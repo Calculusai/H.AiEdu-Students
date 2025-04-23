@@ -200,7 +200,7 @@ $total_pages = ceil($total_records / $per_page);
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content glass">
                                     <div class="modal-header border-bottom-0">
-                                        <h5 class="modal-title gradient-text" id="achievementModalLabel<?php echo $achievement['id']; ?>"><?php echo htmlspecialchars($achievement['title']); ?></h5>
+                                        <h5 class="modal-title" id="achievementModalLabel<?php echo $achievement['id']; ?>"><?php echo htmlspecialchars($achievement['title']); ?></h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body p-4">

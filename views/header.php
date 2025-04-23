@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="少儿编程成就展示系统 - 记录和展示少儿编程学习成就">
+    <meta name="description" content="<?php echo htmlspecialchars(get_setting('site_description', '少儿编程成就展示系统 - 记录和展示少儿编程学习成就')); ?>">
     <meta name="csrf-token" content="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
-    <title><?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?></title>
+    <title><?php echo isset($page_title) ? $page_title . ' - ' . get_setting('site_name', SITE_NAME) : get_setting('site_name', SITE_NAME); ?></title>
     
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
     
     <!-- 基础样式 -->
     <link rel="stylesheet" href="<?php echo asset_url('css/style.css'); ?>">
+    
+    <!-- 动态样式（根据系统设置生成） -->
+    <link rel="stylesheet" href="<?php echo asset_url('css/dynamic-style.php'); ?>">
     
     <!-- 导航栏样式 -->
     <link rel="stylesheet" href="<?php echo asset_url('css/navbar.css'); ?>">
@@ -51,7 +54,7 @@
             <div class="container">
                 <a href="<?php echo site_url(); ?>" class="navbar-brand">
                     <i class="bi bi-trophy-fill"></i>
-                    <?php echo SITE_NAME; ?>
+                    <?php echo get_setting('site_name', SITE_NAME); ?>
                 </a>
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="切换导航">

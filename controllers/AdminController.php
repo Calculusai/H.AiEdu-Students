@@ -1209,7 +1209,54 @@ class AdminController {
             
             // 如果更新了其他关键设置，也可以在这里同步到config.php
             if ($group === 'general' && isset($settings['site_description'])) {
-                // 将来可以添加其他全局配置同步
+                $this->updateConfigConstant('SITE_DESCRIPTION', $settings['site_description']);
+            }
+            
+            // 内容设置特殊处理
+            if ($group === 'content') {
+                // 如果更新了页脚文本后缀，同步更新config.php中的常量
+                if (isset($settings['footer_copyright_suffix'])) {
+                    $this->updateConfigConstant('FOOTER_COPYRIGHT_SUFFIX', $settings['footer_copyright_suffix']);
+                }
+            }
+            
+            // 外观设置特殊处理
+            if ($group === 'appearance') {
+                // 如果更新了主题色，同步更新config.php中的常量
+                if (isset($settings['primary_color'])) {
+                    $this->updateConfigConstant('PRIMARY_COLOR', $settings['primary_color']);
+                }
+                
+                // 如果更新了次要颜色，同步更新config.php中的常量
+                if (isset($settings['secondary_color'])) {
+                    $this->updateConfigConstant('SECONDARY_COLOR', $settings['secondary_color']);
+                }
+                
+                // 如果更新了边框圆角设置
+                if (isset($settings['border_radius'])) {
+                    // 添加单位
+                    $borderRadius = $settings['border_radius'] . 'rem';
+                    $this->updateConfigConstant('BORDER_RADIUS', $borderRadius);
+                }
+                
+                // 如果更新了阴影强度设置
+                if (isset($settings['shadow_intensity'])) {
+                    $this->updateConfigConstant('SHADOW_INTENSITY', $settings['shadow_intensity']);
+                }
+                
+                // 如果更新了动画设置
+                if (isset($settings['enable_animations'])) {
+                    $enableAnimations = $settings['enable_animations'] ? 'true' : 'false';
+                    $this->updateConfigConstant('ENABLE_ANIMATIONS', $enableAnimations, false);
+                }
+                
+                // 如果更新了卡片样式
+                if (isset($settings['card_style'])) {
+                    $this->updateConfigConstant('CARD_STYLE', $settings['card_style']);
+                }
+                
+                // 记录外观设置已更新，前端将使用此标记来触发页面刷新
+                $_SESSION['appearance_settings_updated'] = true;
             }
         } else {
             $_SESSION['flash_message'] = '保存设置失败，请重试。';
@@ -1225,9 +1272,10 @@ class AdminController {
      *
      * @param string $constant 常量名
      * @param string $value 新值
+     * @param bool $quoted 是否需要引号
      * @return bool 是否成功
      */
-    private function updateConfigConstant($constant, $value) {
+    private function updateConfigConstant($constant, $value, $quoted = true) {
         try {
             $configFile = BASE_PATH . '/config.php';
             
@@ -1240,12 +1288,44 @@ class AdminController {
             // 读取当前配置文件内容
             $content = file_get_contents($configFile);
             
-            // 转义值中的特殊字符（如引号）
-            $escapedValue = str_replace("'", "\'", $value);
+            // 特殊处理FOOTER_TEXT常量
+            if ($constant === 'FOOTER_TEXT') {
+                // 使用一个更宽松的正则表达式来匹配FOOTER_TEXT的任何定义形式
+                $pattern = "/define\s*\(\s*['\"]{$constant}['\"]\s*,\s*.*?\)\s*;/s";
+                
+                // 创建标准格式的FOOTER_TEXT定义
+                if ($quoted) {
+                    $escapedValue = str_replace("'", "\'", $value);
+                    $replacement = "define('{$constant}', '{$escapedValue}');";
+                } else {
+                    $replacement = "define('{$constant}', {$value});";
+                }
+                
+                // 替换整个定义
+                $newContent = preg_replace($pattern, $replacement, $content);
+                
+                if ($newContent !== $content) {
+                    file_put_contents($configFile, $newContent);
+                    return true;
+                }
+                
+                error_log("无法更新FOOTER_TEXT常量");
+                return false;
+            }
             
-            // 使用正则表达式替换常量值
-            $pattern = "/define\s*\(\s*['\"]" . preg_quote($constant, '/') . "['\"][\s,]*['\"].*['\"]\s*\)/";
-            $replacement = "define('{$constant}', '{$escapedValue}')";
+            // 处理其他常量
+            if ($quoted) {
+                // 转义值中的特殊字符（如引号）
+                $escapedValue = str_replace("'", "\'", $value);
+                
+                // 使用正则表达式替换常量值
+                $pattern = "/define\s*\(\s*['\"]" . preg_quote($constant, '/') . "['\"][\s,]*['\"](.*?)['\"][\s]*\)/";
+                $replacement = "define('{$constant}', '{$escapedValue}')";
+            } else {
+                // 对于布尔值或数字，不使用引号
+                $pattern = "/define\s*\(\s*['\"]" . preg_quote($constant, '/') . "['\"][\s,]*['\"]?(.*?)['\"]?[\s]*\)/";
+                $replacement = "define('{$constant}', {$value})";
+            }
             
             // 替换并写回文件
             $newContent = preg_replace($pattern, $replacement, $content);

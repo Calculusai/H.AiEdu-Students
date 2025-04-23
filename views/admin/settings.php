@@ -102,11 +102,10 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     </div>
                                 </div>
                                 
-                                
                                 <div class="mb-4">
-                                    <label for="footer_text" class="form-label">页脚信息</label>
-                                    <textarea class="form-control custom-select" id="footer_text" name="footer_text" rows="2"><?php echo htmlspecialchars($settings['content']['footer_text'] ?? '&copy; ' . date('Y') . ' ' . ($settings['general']['site_name'] ?? '少儿编程成就展示系统') . ' - 所有权利保留'); ?></textarea>
-                                    <div class="form-text">支持HTML标签</div>
+                                    <label for="footer_copyright_suffix" class="form-label">页脚版权后缀</label>
+                                    <input type="text" class="form-control custom-select" id="footer_copyright_suffix" name="footer_copyright_suffix" value="<?php echo htmlspecialchars($settings['content']['footer_copyright_suffix'] ?? '保留一切权利'); ?>">
+                                    <div class="form-text">完整页脚格式：版权所有 © [当前年份] [网站名称] - [您在此处输入的文本]</div>
                                 </div>
                                 
                                 <div class="mt-4">
@@ -129,14 +128,42 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                 <div class="mb-4">
                                     <label for="primary_color" class="form-label">主题色</label>
                                     <div class="d-flex align-items-center">
-                                        <input type="color" class="form-control form-control-color me-3" id="primary_color" name="primary_color" value="<?php echo htmlspecialchars($settings['appearance']['primary_color'] ?? '#4361ee'); ?>">
-                                        <div class="color-preview rounded-circle" style="width: 40px; height: 40px; background-color: <?php echo htmlspecialchars($settings['appearance']['primary_color'] ?? '#4361ee'); ?>"></div>
+                                        <input type="color" class="form-control form-control-color me-3" id="primary_color" name="primary_color" value="<?php echo htmlspecialchars($settings['appearance']['primary_color'] ?? PRIMARY_COLOR); ?>">
+                                        <div class="color-preview rounded-circle" style="width: 40px; height: 40px; background-color: <?php echo htmlspecialchars($settings['appearance']['primary_color'] ?? PRIMARY_COLOR); ?>"></div>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-4">
+                                    <label for="secondary_color" class="form-label">次要颜色</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="color" class="form-control form-control-color me-3" id="secondary_color" name="secondary_color" value="<?php echo htmlspecialchars($settings['appearance']['secondary_color'] ?? SECONDARY_COLOR); ?>">
+                                        <div class="secondary-color-preview rounded-circle" style="width: 40px; height: 40px; background-color: <?php echo htmlspecialchars($settings['appearance']['secondary_color'] ?? SECONDARY_COLOR); ?>"></div>
+                                    </div>
+                                    <div class="form-text">主题色和次要颜色将用于创建渐变和强调效果</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="border_radius" class="form-label">边框圆角 <span id="radius_value"><?php echo htmlspecialchars($settings['appearance']['border_radius'] ?? BORDER_RADIUS); ?></span></label>
+                                    <input type="range" class="form-range" id="border_radius" name="border_radius" min="0" max="2" step="0.125" value="<?php echo htmlspecialchars(str_replace('rem', '', $settings['appearance']['border_radius'] ?? BORDER_RADIUS)); ?>">
+                                    <div class="d-flex justify-content-between">
+                                        <span>无圆角</span>
+                                        <span>中等</span>
+                                        <span>圆形</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="shadow_intensity" class="form-label">阴影强度</label>
+                                    <select class="form-select" id="shadow_intensity" name="shadow_intensity">
+                                        <option value="light" <?php echo ($settings['appearance']['shadow_intensity'] ?? SHADOW_INTENSITY) == 'light' ? 'selected' : ''; ?>>轻微</option>
+                                        <option value="medium" <?php echo ($settings['appearance']['shadow_intensity'] ?? SHADOW_INTENSITY) == 'medium' ? 'selected' : ''; ?>>中等</option>
+                                        <option value="strong" <?php echo ($settings['appearance']['shadow_intensity'] ?? SHADOW_INTENSITY) == 'strong' ? 'selected' : ''; ?>>强烈</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="enable_animations" name="enable_animations" value="1" <?php echo ($settings['appearance']['enable_animations'] ?? 1) ? 'checked' : ''; ?>>
+                                        <input class="form-check-input" type="checkbox" id="enable_animations" name="enable_animations" value="1" <?php echo ($settings['appearance']['enable_animations'] ?? ENABLE_ANIMATIONS) ? 'checked' : ''; ?>>
                                         <label class="form-check-label" for="enable_animations">启用界面动画效果</label>
                                     </div>
                                 </div>
@@ -146,7 +173,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                     <div class="row g-3 mt-2">
                                         <div class="col-md-4">
                                             <div class="card-style-option">
-                                                <input type="radio" class="btn-check" name="card_style" id="card_style_standard" value="standard" <?php echo ($settings['appearance']['card_style'] ?? 'standard') == 'standard' ? 'checked' : ''; ?>>
+                                                <input type="radio" class="btn-check" name="card_style" id="card_style_standard" value="standard" <?php echo ($settings['appearance']['card_style'] ?? CARD_STYLE) == 'standard' ? 'checked' : ''; ?>>
                                                 <label class="card h-100 text-center p-3" for="card_style_standard">
                                                     <div class="py-3 px-4 bg-light rounded mb-2"></div>
                                                     <span>标准</span>
@@ -155,7 +182,7 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                         </div>
                                         <div class="col-md-4">
                                             <div class="card-style-option">
-                                                <input type="radio" class="btn-check" name="card_style" id="card_style_gradient" value="gradient" <?php echo ($settings['appearance']['card_style'] ?? '') == 'gradient' ? 'checked' : ''; ?>>
+                                                <input type="radio" class="btn-check" name="card_style" id="card_style_gradient" value="gradient" <?php echo ($settings['appearance']['card_style'] ?? CARD_STYLE) == 'gradient' ? 'checked' : ''; ?>>
                                                 <label class="card h-100 text-center p-3" for="card_style_gradient">
                                                     <div class="py-3 px-4 rounded mb-2" style="background: linear-gradient(45deg, #4e73df, #6f42c1);"></div>
                                                     <span>渐变</span>
@@ -164,11 +191,27 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
                                         </div>
                                         <div class="col-md-4">
                                             <div class="card-style-option">
-                                                <input type="radio" class="btn-check" name="card_style" id="card_style_dopamine" value="dopamine" <?php echo ($settings['appearance']['card_style'] ?? '') == 'dopamine' ? 'checked' : ''; ?>>
+                                                <input type="radio" class="btn-check" name="card_style" id="card_style_dopamine" value="dopamine" <?php echo ($settings['appearance']['card_style'] ?? CARD_STYLE) == 'dopamine' ? 'checked' : ''; ?>>
                                                 <label class="card h-100 text-center p-3" for="card_style_dopamine">
                                                     <div class="py-3 px-4 rounded mb-2" style="background: linear-gradient(45deg, #FF6B9A, #7367F0);"></div>
                                                     <span>多巴胺风格</span>
                                                 </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="card glass p-3 mb-4">
+                                        <h6 class="mb-3">预览效果</h6>
+                                        <div class="preview-container">
+                                            <div class="preview-card" id="preview-card">
+                                                <div class="preview-card-header">卡片标题</div>
+                                                <div class="preview-card-body">
+                                                    <p>这是一个卡片内容示例。您可以在这里查看样式设置的效果。</p>
+                                                    <button class="btn btn-sm btn-primary">主按钮</button>
+                                                    <button class="btn btn-sm btn-secondary">次要按钮</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -240,55 +283,23 @@ include_once VIEW_PATH . '/templates/breadcrumb.php';
     </div>
 </div>
 
+<!-- 引入设置页面专用JS -->
+<?php 
+// 设置JS文件
+$extra_js = '<script src="' . asset_url('js/admin_settings.js') . '?v=' . time() . '"></script>';
+?>
+
+<!-- 用于处理安全设置更新通知 -->
 <script>
-$(document).ready(function() {
-    // 显示密码长度滑块的值
-    $('#min_password_length').on('input', function() {
-        $('#password_length_value').text($(this).val());
-    });
-    
-    // 更新主题颜色预览
-    $('#primary_color').on('input', function() {
-        $('.color-preview').css('background-color', $(this).val());
-    });
-    
-    // 安全设置表单提交时添加标识符
-    $('#security-form').on('submit', function() {
-        $(this).append('<input type="hidden" name="is_security_setting" value="1">');
-        $('#security-submit-btn').prop('disabled', true).text('正在保存...');
-        return true;
-    });
-    
-    // 检查是否有成功消息并且是安全设置已保存
-    <?php if (isset($_SESSION['security_settings_updated']) && $_SESSION['security_settings_updated']): ?>
-    // 清除标记，避免重复刷新
-    <?php unset($_SESSION['security_settings_updated']); ?>
-    alert('安全设置已更新，系统将重新加载页面以应用新设置。');
-    // 稍微延迟刷新，让用户看到消息
-    setTimeout(function() {
-        window.location.reload();
-    }, 1000);
-    <?php endif; ?>
-    
-    // 根据URL参数激活对应的标签页
-    var activeTab = getUrlParameter('tab') || 'general';
-    $('#' + activeTab + '-tab').addClass('active');
-    $('#' + activeTab).addClass('show active');
-    
-    // 从URL获取参数的辅助函数
-    function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
-    
-    // 切换标签页时更新URL，不刷新页面
-    $('.nav-link').on('click', function() {
-        var tabId = $(this).attr('id').replace('-tab', '');
-        history.replaceState(null, null, '?tab=' + tabId);
-    });
-});
+<?php if (isset($_SESSION['security_settings_updated']) && $_SESSION['security_settings_updated']): ?>
+// 清除标记，避免重复刷新
+<?php unset($_SESSION['security_settings_updated']); ?>
+alert('安全设置已更新，系统将重新加载页面以应用新设置。');
+// 稍微延迟刷新，让用户看到消息
+setTimeout(function() {
+    window.location.reload();
+}, 1000);
+<?php endif; ?>
 </script>
 
 <style>
@@ -323,6 +334,34 @@ $(document).ready(function() {
 .nav-pills .nav-link.active {
     background-color: var(--primary-color);
     color: white;
+}
+
+/* 预览卡片样式 */
+.preview-container {
+    padding: 20px;
+    background-color: #f5f7fa;
+    border-radius: var(--border-radius);
+}
+
+.preview-card {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-card-header {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+}
+
+.preview-card-body {
+    padding: 1.25rem;
+}
+
+.preview-card-body p {
+    margin-bottom: 1rem;
 }
 </style>
 
