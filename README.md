@@ -102,7 +102,8 @@
 │   │   └── student-detail.css # 学生详情样式 ✅
 │   ├── js/           # JavaScript文件 ✅
 │   │   ├── main.js            # 主要功能脚本 ✅
-│   │   └── navbar.js          # 导航栏脚本 ✅
+│   │   ├── navbar.js          # 导航栏脚本 ✅
+│   │   └── admin_settings.js  # 管理员设置脚本 ✅
 │   └── images/       # 图片资源 ✅
 ├── uploads/          # 上传文件目录 ✅
 │   └── certificates/ # 成就证书存储 ✅
@@ -120,6 +121,7 @@
    - 核心类库 ✅
    - 主题切换 ✅
    - 响应式布局 ✅
+   - 前后端分离（JS与HTML分离）✅
 
 2. **管理员功能**
    - 登录系统 ✅
